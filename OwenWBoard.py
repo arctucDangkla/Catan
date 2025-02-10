@@ -1,7 +1,6 @@
 import math
 import pygame
 import random
-import time
 
 # Screen Size
 SCREENWIDTH = 1000
@@ -21,7 +20,6 @@ font = pygame.font.Font(None, 36)  # Default font, size 36
 dice_result = None
 dice_values = [1, 1]  # Stores the values of the two dice
 
-
 # Function to calculate hexagon points
 def calculate_hexagon(center_x, center_y, radius):
     points = []
@@ -33,14 +31,12 @@ def calculate_hexagon(center_x, center_y, radius):
         points.append((x, y))
     return points
 
-
 # Function to roll the dice
 def roll_dice():
     global dice_result, dice_values
     dice_values = [random.randint(1, 6), random.randint(1, 6)]  # Roll two dice
     dice_result = sum(dice_values)  # Sum the dice
     print(f"Dice Roll: {dice_values} (Total: {dice_result})")  # Optional: Print result to console
-
 
 # Function to draw a single die
 def draw_die(surface, x, y, size, value):
@@ -75,11 +71,8 @@ def draw_die(surface, x, y, size, value):
         pygame.draw.circle(surface, dot_color, (x + size // 4, y + 3 * size // 4), size // 8)
         pygame.draw.circle(surface, dot_color, (x + 3 * size // 4, y + 3 * size // 4), size // 8)
 
-
 # Function to draw the game board with numbers, colored hexagons, and the robber
-def game_board(rand_nums: bool = False, rand_re: bool = False):
-
-
+def game_board():
     # Colors for the board
     bg_color = (79, 166, 235)  # Light blue background
     number_color = (0, 0, 0)  # Black color for numbers
@@ -108,7 +101,6 @@ def game_board(rand_nums: bool = False, rand_re: bool = False):
         [5, 6, 11]  # Fifth row
     ]
 
-
     # Resources for each hexagon
     resources = [  # Sample board
         [ore_color, sheep_color, wood_color],  # 1
@@ -117,23 +109,6 @@ def game_board(rand_nums: bool = False, rand_re: bool = False):
         [wood_color, ore_color, wheat_color, sheep_color],  # 4
         [brick_color, wheat_color, sheep_color]  # 5
     ]
-
-    if rand_re:
-        temp_re = [desert_color, ore_color, ore_color, ore_color, sheep_color, sheep_color, sheep_color, sheep_color, wood_color, wood_color, wood_color, wood_color, wheat_color, wheat_color, wheat_color, wheat_color, brick_color, brick_color, brick_color]
-        for row in resources:
-            for col in range(len(row)):
-                row[col] = temp_re.pop(random.randint(0, len(temp_re)-1))
-    if rand_nums:
-        numbers = []
-        temp_nums = [10, 2, 9, 12, 6, 4, 10, 9, 11, 3, 8, 8, 3, 4, 5, 5, 6, 11]
-        for row in resources:
-            temp_array = []
-            for re in row:
-                if re == desert_color:
-                    temp_array.append(None)
-                else:
-                    temp_array.append(temp_nums.pop(random.randint(0, len(temp_nums)-1)))
-            numbers.append(temp_array)
 
     screen.fill(bg_color)  # Fill the screen with the background color
 
@@ -175,29 +150,26 @@ def game_board(rand_nums: bool = False, rand_re: bool = False):
     if robber_position:
         pygame.draw.circle(screen, robber_color, robber_position, int(hex_size * 0.3))
 
-    # Draw the dice
+    # Draw the dice at the bottom middle of the screen
     die_size = 60  # Size of each die
     die_spacing = 20  # Space between the two dice
-    dice_x = SCREENWIDTH - 200  # X position for the dice
-    dice_y = SCREENHEIGHT - 100  # Y position for the dice
+    total_dice_width = 2 * die_size + die_spacing  # Total width of both dice
+    dice_x = (SCREENWIDTH - total_dice_width) // 2  # Center the dice horizontally
+    dice_y = SCREENHEIGHT - 80  # Y position for the dice (moved lower)
 
     draw_die(screen, dice_x, dice_y, die_size, dice_values[0])  # Draw first die
     draw_die(screen, dice_x + die_size + die_spacing, dice_y, die_size, dice_values[1])  # Draw second die
 
-
-if __name__ == "__main__":
-    """
+while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:  # Check for key press
             if event.key == pygame.K_SPACE:  # Roll dice when spacebar is pressed
                 roll_dice()
-    """
-    game_board(True, True)
 
+    game_board()
     pygame.display.flip()
-    time.sleep(10)
     clock.tick(60)
 
-#pygame.quit()
+pygame.quit()
