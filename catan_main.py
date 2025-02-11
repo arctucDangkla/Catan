@@ -34,7 +34,7 @@ while running:
 
     # draws the game board
     board.draw_board(screen, dice_vals.result)
-    print(dice_vals.result)
+
     # Draws the dice
     dice_vals.draw_die(screen, dice_vals.x, dice_vals.y, dice_vals.size, dice_vals.values[0])  # Draw first die
     dice_vals.draw_die(screen, dice_vals.x + dice_vals.size + dice_vals.spacing, dice_vals.y, dice_vals.size,
