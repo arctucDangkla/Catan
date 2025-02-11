@@ -40,7 +40,7 @@ class Board:
         return points
 
     # Method that will draw the game board
-    def draw_board(self, screen):
+    def draw_board(self, screen, roll):
         # Color info for different parts of the board
         number_color = (0, 0, 0)  # Black color for numbers
         robber_color = (50, 50, 50)  # Dark gray for the robber
@@ -85,6 +85,10 @@ class Board:
                     number_text = self.font.render(str(self.numbers[num_idx]), True, number_color)
                     text_rect = number_text.get_rect(center=(x, y))
 
+                    # If the current tile equals the roll, highlight the chip.
+                    if self.numbers[num_idx] == roll:
+                        pygame.draw.circle(screen, (255, 0, 0), (x, y), int(hex_size * .4))
+
                     # Draws a game chip to make number more visible
                     pygame.draw.circle(screen, self.colors["D"], (x, y), int(hex_size * 0.3))
 
@@ -93,8 +97,12 @@ class Board:
 
                     num_idx += 1
                 tile_idx += 1
-        # Draws the robber after all of the board is made.
+        # Draws the robber after all of the board is made. If the roll is 7,
+        # highlight the robber.
+        if roll == 7:
+            pygame.draw.circle(screen, (255, 0, 0), self.robber_pos, int(hex_size * 0.4))
         pygame.draw.circle(screen, robber_color, self.robber_pos, int(hex_size * 0.3))
+
 
     # Shuffles the entire board and numbers
     def shuffle_board(self):
