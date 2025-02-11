@@ -1,14 +1,19 @@
 import pygame
 
 class Button:
-    def __init__(self, x, y, image, scale=1.0):
-        # Attempts to initialize the image with Pygame
-        img = pygame.image.load(image).convert_alpha()
-        self.image = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
+    def __init__(self, x, y, image:str="none", width=0, height=0, scale=1.0):
+        # If the button is to be transparent, make a transparent surface
+        if image.lower() == "none":
+            self.image = pygame.Surface((width, height), pygame.SRCALPHA, 32)
+            self.image = self.image.convert_alpha()
+        # Otherwise make a button out of the image
+        else:
+            img = pygame.image.load(image).convert_alpha()
+            self.image = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
         self.clicked = False
-
+        
     # Function that draws the button onto the screen.
     def draw(self, screen):
         action = False
