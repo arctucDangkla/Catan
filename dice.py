@@ -3,13 +3,21 @@ import random
 
 class Dice:
     def __init__(self, width, height):
+
         self.values = [random.randint(1, 6), random.randint(1, 6)]  # Roll two dice
         self.result = sum(self.values)  # Sum the dice
         self.size = 60  # Size of each die
         self.spacing = 20  # Space between the two dice
         self.total_width = 2 * self.size + self.spacing  # Total width of both dice
-        self.x = (width - self.total_width) // 2  # Center the dice horizontally
-        self.y = height - 80  # Y position for the dice (moved lower)
+
+        # Type checks inputs and sets
+        if (isinstance(width, int) or isinstance(width, float)) and (
+                isinstance(height, int) or isinstance(height, float)):
+            self.x = (width - self.total_width) // 2  # Center the dice horizontally
+            self.y = height - 80  # Y position for the dice (moved lower)
+        else:
+            raise TypeError
+
 
     # "Rolls" and randomizes the dice
     def roll_dice(self):
