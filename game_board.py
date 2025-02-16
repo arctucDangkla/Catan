@@ -9,8 +9,13 @@ class Board:
         self.tile_list = ["O", "S", "Wo", "Wh", "B", "S", "B", "Wh", "Wo", "D",
                      "Wo", "O", "Wo", "O", "Wh", "S", "B", "Wh", "S"
                     ]
-        self.height = height
-        self.width = width
+
+        # Type checks inputs and Sets
+        if (isinstance(width, int) or isinstance(width, float)) and (isinstance(height, int) or isinstance(height, float)):
+            self.height = height
+            self.width = width
+        else:
+            raise TypeError
 
         # The colors of each different material in a dictionary
         self.colors = {
