@@ -1,6 +1,7 @@
 import random
 import pygame
 from unittest import *
+from unittest.mock import MagicMock
 from game_board import Board
 from dice import Dice
 
