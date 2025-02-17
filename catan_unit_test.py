@@ -68,23 +68,29 @@ class TestDice(TestCase):
         self.assertEqual(dice.result, 9)
 
     def test_initialization(self):
-            self.assertEqual(len(self.dice.values), 2)  
-            self.assertTrue(1 <= self.dice.values[0] <= 6)  
-            self.assertTrue(1 <= self.dice.values[1] <= 6) 
-            self.assertEqual(self.dice.result, sum(self.dice.values)) 
-            self.assertEqual(self.dice.size, 60)  
-            self.assertEqual(self.dice.spacing, 20)  
-            self.assertEqual(self.dice.total_width, 140)  
-            self.assertEqual(self.dice.x, (self.width - self.dice.total_width) // 2) 
-            self.assertEqual(self.dice.y, self.height - 80)  
+        random.seed(27)
+        width = 1
+        height = 1
+        dice = Dice(width, height)
+
+        self.assertEqual(len(dice.values), 2)
+        self.assertTrue(1 <= dice.values[0] <= 6)
+        self.assertTrue(1 <= dice.values[1] <= 6)
+        self.assertEqual(dice.result, sum(dice.values))
+        self.assertEqual(dice.size, 60)
+        self.assertEqual(dice.spacing, 20)
+        self.assertEqual(dice.total_width, 140)
+        self.assertEqual(dice.x, (width - dice.total_width) // 2)
+        self.assertEqual(dice.y, height - 80)
 
     def test_roll_dice(self):
-        original_values = self.dice.values.copy()
-        original_result = self.dice.result
-        self.dice.roll_dice()
-        self.assertNotEqual(self.dice.values, original_values)  
-        self.assertNotEqual(self.dice.result, original_result)  
-        self.assertEqual(self.dice.result, sum(self.dice.values))  
+        dice = Dice(1, 1)
+        original_values = dice.values.copy()
+        original_result = dice.result
+        dice.roll_dice()
+        self.assertNotEqual(dice.values, original_values)
+        self.assertNotEqual(dice.result, original_result)
+        self.assertEqual(dice.result, sum(dice.values))
 
     def test_draw_die(self):
         surface = MagicMock()  
