@@ -66,8 +66,47 @@ class TestDice(TestCase):
         self.assertEqual(dice.values, [6, 3])
         self.assertEqual(dice.result, 9)
 
+    def test_initialization(self):
+            self.assertEqual(len(self.dice.values), 2)  
+            self.assertTrue(1 <= self.dice.values[0] <= 6)  
+            self.assertTrue(1 <= self.dice.values[1] <= 6) 
+            self.assertEqual(self.dice.result, sum(self.dice.values)) 
+            self.assertEqual(self.dice.size, 60)  
+            self.assertEqual(self.dice.spacing, 20)  
+            self.assertEqual(self.dice.total_width, 140)  
+            self.assertEqual(self.dice.x, (self.width - self.dice.total_width) // 2) 
+            self.assertEqual(self.dice.y, self.height - 80)  
 
-# Test functions that require the combination of other functions
+    def test_roll_dice(self):
+        original_values = self.dice.values.copy()
+        original_result = self.dice.result
+        self.dice.roll_dice()
+        self.assertNotEqual(self.dice.values, original_values)  
+        self.assertNotEqual(self.dice.result, original_result)  
+        self.assertEqual(self.dice.result, sum(self.dice.values))  
+
+    def test_draw_die(self):
+        surface = MagicMock()  
+        x, y, size, value = 100, 100, 60, 3  
+        self.dice.draw_die(surface, x, y, size, value)
+        surface.draw_rect.assert_called_once()  
+        self.assertEqual(surface.draw_circle.call_count, 3) 
+
+    def test_draw(self):
+        surface = MagicMock()  
+        self.dice.draw(surface)
+        self.assertEqual(surface.draw_rect.call_count, 2) 
+        total_circles = sum([4 if value == 4 else 5 if value == 5 else 6 if value == 6 else value for value in self.dice.values])
+        self.assertEqual(surface.draw_circle.call_count, total_circles)
+
+    def test_invalid_initialization(self):
+        with self.assertRaises(TypeError):
+            Dice("invalid", 300)  
+        with self.assertRaises(TypeError):
+            Dice(400, "invalid") 
+
+
+
 class TestMain(TestCase):
 
     def setUp(self):
