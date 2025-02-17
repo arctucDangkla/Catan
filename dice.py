@@ -2,7 +2,7 @@ import pygame
 import random
 
 class Dice:
-    def __init__(self, width, height):
+    def __init__(self, x, y):
 
         self.values = [random.randint(1, 6), random.randint(1, 6)]  # Roll two dice
         self.result = sum(self.values)  # Sum the dice
@@ -11,10 +11,10 @@ class Dice:
         self.total_width = 2 * self.size + self.spacing  # Total width of both dice
 
         # Type checks inputs and sets
-        if (isinstance(width, int) or isinstance(width, float)) and (
-                isinstance(height, int) or isinstance(height, float)):
-            self.x = (width - self.total_width) // 2  # Center the dice horizontally
-            self.y = height - 80  # Y position for the dice (moved lower)
+        if (isinstance(x, int) or isinstance(x, float)) and (
+                isinstance(y, int) or isinstance(y, float)):
+            self.x = (x - self.total_width) // 2  # Center the dice horizontally
+            self.y = y - 80  # Y position for the dice (moved lower)
         else:
             raise TypeError
 
