@@ -1,10 +1,34 @@
 import pygame
 import math
 import random
-import Nodes_and_structures_map as grid
+import Nodes_and_structures_map as Grid
 
 
 class Board:
+    # To make the hexagons for the board
+    @staticmethod
+    def __calculate_hexagon(center_x, center_y, radius):
+        points = []
+        for i in range(6):  # 6 sides in a hexagon
+            angle_deg = 60 * i - 90  # Start at -90° so that point is at the top
+            angle_rad = math.radians(angle_deg)
+            x = center_x + radius * math.cos(angle_rad)
+            y = center_y + radius * math.sin(angle_rad)
+            points.append((x, y))
+        return points
+
+    # To make Diamonds for the board
+    @staticmethod
+    def __calculate_diamond(center_x, center_y, radius):
+        points = []
+        for i in range(4):  # 4 sides in a diamond
+            angle_deg = 90 * i - 45  # Start at -90° so that point is at the top
+            angle_rad = math.radians(angle_deg)
+            x = center_x + radius * math.cos(angle_rad)
+            y = center_y + radius * math.sin(angle_rad)
+            points.append((x, y))
+        return points
+
     def __init__(self, width, height):
         # Type checks inputs and Sets
         if (isinstance(width, int) or isinstance(width, float)) and (
@@ -20,7 +44,7 @@ class Board:
                           ]
 
         # Grid of structures and roads
-        self.grid = grid.Graph()
+        self.grid = Grid.Graph()
 
         # The colors of each different material and player in a dictionary
         self.colors = {
@@ -45,50 +69,16 @@ class Board:
         # Font info
         self.font = pygame.font.Font(None, 36)  # Default font, size 36 for text
 
-
-
-    # To make the hexagons for the board
-    @staticmethod
-    def __calculate_hexagon(center_x, center_y, radius):
-        points = []
-        for i in range(6):  # 6 sides in a hexagon
-            angle_deg = 60 * i - 90  # Start at -90° so that point is at the top
-            angle_rad = math.radians(angle_deg)
-            x = center_x + radius * math.cos(angle_rad)
-            y = center_y + radius * math.sin(angle_rad)
-            points.append((x, y))
-        return points
-
-    @staticmethod
-    def __calculate_diamond(center_x, center_y, radius):
-        points = []
-        for i in range(4):  # 4 sides in a diamond
-            angle_deg = 90 * i - 45  # Start at -90° so that point is at the top
-            angle_rad = math.radians(angle_deg)
-            x = center_x + radius * math.cos(angle_rad)
-            y = center_y + radius * math.sin(angle_rad)
-            points.append((x, y))
-        return points
-
-    # Method that will draw the game board
-    def draw_board(self, screen, roll):
-        # Color info for different parts of the board
-        number_color = (0, 0, 0)  # Black color for numbers
-        robber_color = (50, 50, 50)  # Dark gray for the robber
-
         # Size info for the hexagon
         self.start_x = self.width * 0.35  # Starting x pos of the grid
         self.start_y = self.height / 6  # Starting y pos of the grid
         self.hex_size = self.height / 10  # Size of the hexagon
         self.hex_diff = self.hex_size * 1.875  # Difference between hexagons horizontally
         self.row_height = self.hex_diff - 21  # Difference between hexagons vertically
-
-        # The index position for tiles and number lists
-        tile_idx = 0
-        num_idx = 0
+        self.point_lst = []
 
         # A list of tuples where (hex_count, row offset)
-        rows = [
+        self.rows = [
             (3, 0),
             (4, 1),
             (5, 2),
@@ -96,40 +86,60 @@ class Board:
             (3, 4)
         ]
 
-        self.point_lst = []
-        for hex_count, row_offset in rows:
+        self.generate_hexagons()
+        self.create_buildings()
+
+    def generate_hexagons(self):
+
+        for hex_count, row_offset in self.rows:
             for i in range(hex_count):
                 # The center x and y positions of the current hex
                 x = self.start_x + self.hex_diff * i - (hex_count % 3) * self.hex_size + 5 * (hex_count % 3)
                 y = self.start_y + self.row_height * row_offset
 
                 # Make and draw the hexagon
-                points = self.__calculate_hexagon(x, y, self.hex_size)
-                self.point_lst.append(points)
-                pygame.draw.polygon(screen, self.colors[self.tile_list[tile_idx]], points)
+                self.point_lst.append(list(self.__calculate_hexagon(x, y, self.hex_size)))
 
-                # If it is the desert tile, move the robber, don't add number.
-                if self.tile_list[tile_idx] == "D":
-                    self.robber_pos = (x, y)
-                # Otherwise add the number like a normal tile
-                else:
-                    # Initialize the number
-                    number_text = self.font.render(str(self.numbers[num_idx]), True, number_color)
-                    text_rect = number_text.get_rect(center=(x, y))
+    # Method that will draw the game board
+    def draw_board(self, screen, roll):
+        # Color info for different parts of the board
+        number_color = (0, 0, 0)  # Black color for numbers
+        robber_color = (50, 50, 50)  # Dark gray for the robber
 
-                    # If the current tile equals the roll, highlight the chip.
-                    if self.numbers[num_idx] == roll:
-                        pygame.draw.circle(screen, (255, 0, 0), (x, y), int(self.hex_size * .4))
+        # The index position for tiles and number lists
+        tile_idx = 0
+        num_idx = 0
 
-                    # Draws a game chip to make number more visible
-                    pygame.draw.circle(screen, self.colors["D"], (x, y), int(self.hex_size * 0.3))
+        for point in self.point_lst:
+            pygame.draw.polygon(screen, self.colors[self.tile_list[tile_idx]], point)
 
-                    # "Draw" the number on screen
-                    screen.blit(number_text, text_rect)
+            x = sum([num[0] for num in point]) / 6
+            y = sum([num[1] for num in point]) / 6
 
-                    num_idx += 1
-                tile_idx += 1
-        # Draws the robber after all of the board is made. If the roll is 7,
+            # If it is the desert tile, move the robber, don't add number.
+            if self.tile_list[tile_idx] == "D":
+
+                self.robber_pos = [x, y]
+
+            # Otherwise add the number like a normal tile
+            else:
+                # Initialize the number
+                number_text = self.font.render(str(self.numbers[num_idx]), True, number_color)
+                text_rect = number_text.get_rect(center=(x, y))
+
+                # If the current tile equals the roll, highlight the chip.
+                if self.numbers[num_idx] == roll:
+                    pygame.draw.circle(screen, (255, 0, 0), (x, y), int(self.hex_size * .4))
+
+                # Draws a game chip to make number more visible
+                pygame.draw.circle(screen, self.colors["D"], (x, y), int(self.hex_size * 0.3))
+
+                # "Draw" the number on screen
+                screen.blit(number_text, text_rect)
+
+                num_idx += 1
+            tile_idx += 1
+        # Draws the robber after all the board is made. If the roll is 7,
         # highlight the robber.
         if roll == 7:
             pygame.draw.circle(screen, (255, 0, 0), self.robber_pos, int(self.hex_size * 0.4))
@@ -152,7 +162,6 @@ class Board:
     # Sets up the map of all buildings
     def create_buildings(self):
 
-
         # Loops for every hex - Finds center location betweens each hec for nodes
         for i in range(len(self.point_lst)):
 
@@ -174,7 +183,10 @@ class Board:
                 top_row = 8
 
             # Goes through every point in hex and sends cords to node
+            print(type(self.grid.node_list[top_row][node].location))
+            print(self.grid.node_list[top_row][node].location)
             if top_row < 6:
+
                 self.grid.node_list[top_row][node].location.append(self.point_lst[i][0])
             else:
                 self.grid.node_list[top_row][node + 1].location.append(self.point_lst[i][0])

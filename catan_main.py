@@ -7,10 +7,10 @@ import dice
 if __name__ == "__main__":
     pygame.init()
 
+
     # Screen Size
     SCREENWIDTH = 1000
-    SCREENHEIGHT = SCREENWIDTH * .80 #800 pixels
-
+    SCREENHEIGHT = SCREENWIDTH * .80  # 800 pixels
     # pygame setup
     pygame.init()
     screen = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     # Initialize the Board
     board = game_board.Board(SCREENWIDTH, SCREENHEIGHT)
     board.draw_board(screen, dice_vals.result)
-    board.create_buildings()
+
 
     while running:
         # Makes the background for the game.
@@ -41,8 +41,6 @@ if __name__ == "__main__":
         board.draw_board(screen, dice_vals.result)
         board.draw_building(screen)
 
-
-
         # Draws the dice
         dice_vals.draw_die(screen, dice_vals.x, dice_vals.y, dice_vals.size, dice_vals.values[0])  # Draw first die
         dice_vals.draw_die(screen, dice_vals.x + dice_vals.size + dice_vals.spacing, dice_vals.y, dice_vals.size,
@@ -51,9 +49,11 @@ if __name__ == "__main__":
         if rand_button.draw(screen):
             board.shuffle_board()
 
+
         # Checks for beginner board press
         if begin_button.draw(screen):
             board.beginner_board()
+
 
 
 
