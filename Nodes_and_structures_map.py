@@ -1,4 +1,4 @@
-
+import pygame
 
 # Temp class for writing
 class Player:
@@ -35,11 +35,28 @@ class Node:
     def __init__(self, name):
         self.name = name
         self.roads = list()
-        self.player = None
+        self.player = 1
         self.structure = None
+        self.location = []
 
     def __str__(self):
         return f"{self.name}"
+
+    def avg_location(self):
+        x = 0
+        y = 0
+
+        for i in self.location:
+            x += i[0]
+            y += i[1]
+
+
+
+        x /= len(self.location)
+        y /= len(self.location)
+
+        self.location = (x, y)
+        return self.location
 
 
 class Edge:

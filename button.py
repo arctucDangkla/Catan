@@ -1,5 +1,6 @@
 import pygame
 
+
 class Button:
     def __init__(self, x, y, image:str="none", width=0, height=0, scale=1.0):
         # If the button is to be transparent, make a transparent surface
