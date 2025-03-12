@@ -6,13 +6,6 @@ import Nodes_and_structures_map as grid
 
 class Board:
     def __init__(self, width, height):
-        # List that will keep track of tile placement
-        self.tile_list = ["O", "S", "Wo", "Wh", "B", "S", "B", "Wh", "Wo", "D",
-                          "Wo", "O", "Wo", "O", "Wh", "S", "B", "Wh", "S"
-                          ]
-
-        self.grid = grid.Graph()
-
         # Type checks inputs and Sets
         if (isinstance(width, int) or isinstance(width, float)) and (
                 isinstance(height, int) or isinstance(height, float)):
@@ -21,20 +14,38 @@ class Board:
         else:
             raise TypeError
 
-        # The colors of each different material in a dictionary
+        # List that will keep track of tile placement
+        self.tile_list = ["O", "S", "Wo", "Wh", "B", "S", "B", "Wh", "Wo", "D",
+                          "Wo", "O", "Wo", "O", "Wh", "S", "B", "Wh", "S"
+                          ]
+
+        # Grid of structures and roads
+        self.grid = grid.Graph()
+
+        # The colors of each different material and player in a dictionary
         self.colors = {
             "Wo": (81, 125, 25),
             "B": (156, 67, 0),
             "Wh": (240, 173, 0),
             "O": (123, 111, 131),
             "S": (143, 206, 0),
-            "D": (194, 178, 128)
+            "D": (194, 178, 128),
+            1: (255, 0, 0),
+            2: (0, 255, 0),
+            3: (0, 0, 255),
+            4: (255, 255, 255)
         }
 
         # The numbers for each corresponding hexagon
         self.numbers = [10, 2, 9, 12, 6, 4, 10, 9, 11, 3, 8, 8, 3, 4, 5, 5, 6, 11]
+
+        # Robber position
         self.robber_pos = None
+
+        # Font info
         self.font = pygame.font.Font(None, 36)  # Default font, size 36 for text
+
+
 
     # To make the hexagons for the board
     @staticmethod
@@ -187,5 +198,11 @@ class Board:
     def draw_building(self, screen):
         for row in self.grid.node_list:
             for node in row:
-                pygame.draw.polygon(screen, (100, 20, 50),
-                                    self.__calculate_diamond(node.location[0], node.location[1], 10))
+                if node.city:
+                    pygame.draw.polygon(screen, self.colors[node.player],
+                                        self.__calculate_hexagon(node.location[0], node.location[1], 20))
+                elif node.player == 0:
+                    break
+                else:
+                    pygame.draw.polygon(screen, self.colors[node.player],
+                                        self.__calculate_diamond(node.location[0], node.location[1], 15))

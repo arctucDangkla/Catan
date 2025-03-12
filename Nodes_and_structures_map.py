@@ -35,8 +35,8 @@ class Node:
     def __init__(self, name):
         self.name = name
         self.roads = list()
-        self.player = 1
-        self.structure = None
+        self.player = 4
+        self.city = False
         self.location = []
 
     def __str__(self):
