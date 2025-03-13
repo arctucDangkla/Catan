@@ -28,6 +28,7 @@ if __name__ == "__main__":
     board.draw_board(screen, dice_vals.result)
 
 
+
     while running:
         # Makes the background for the game.
         screen.fill((79, 166, 235))
@@ -40,6 +41,7 @@ if __name__ == "__main__":
         # draws the game board
         board.draw_board(screen, dice_vals.result)
         board.draw_building(screen)
+        board.draw_roads(screen)
 
         # Draws the dice
         dice_vals.draw_die(screen, dice_vals.x, dice_vals.y, dice_vals.size, dice_vals.values[0])  # Draw first die
@@ -53,9 +55,6 @@ if __name__ == "__main__":
         # Checks for beginner board press
         if begin_button.draw(screen):
             board.beginner_board()
-
-
-
 
         # Checks for dice roll
         if dice_button.draw(screen):

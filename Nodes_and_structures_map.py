@@ -1,4 +1,4 @@
-import pygame
+import math
 
 # Temp class for writing
 class Player:
@@ -35,14 +35,15 @@ class Node:
     def __init__(self, name):
         self.name = name
         self.roads = list()
-        self.player = 4
+        self.player = 1
         self.city = False
         self.location = []
+        self.points = []
 
     def __str__(self):
         return f"{self.name}"
 
-    def avg_location(self):
+    def avg_location(self, rad):
         x = 0
         y = 0
 
@@ -56,7 +57,24 @@ class Node:
         y /= len(self.location)
 
         self.location = (x, y)
-        return self.location
+        if self.city:
+            pass
+        else:
+            self.house_points(x, y, rad)
+
+    # House
+    def house_points(self, center_x, center_y, radius):
+        points = []
+        for i in range(4):  # 4 sides in a diamond
+            angle_deg = 90 * i - 45  # Start at -90° so that point is at the top
+            angle_rad = math.radians(angle_deg)
+            x = center_x + radius * math.cos(angle_rad)
+            y = center_y + radius * math.sin(angle_rad)
+            points.append((x, y))
+
+        self.points = points
+
+
 
 
 class Edge:
@@ -75,8 +93,10 @@ class Edge:
             raise TypeError
 
     def __init__(self, node_a: Node, node_b: Node, player: Player = False):
-        self.nodes = {node_a, node_b}
+        self.nodes = [node_a, node_b]
         self.road = player
+        self.player = 1
+        self.points = []
         node_a.roads.append(self)
         node_b.roads.append(self)
 
@@ -88,6 +108,40 @@ class Edge:
         else:
             txt = "Path " + txt
         return txt
+
+    def calc_road_points(self, size):
+        points = [1, 2, 3, 4]
+
+
+        if not isinstance(self.nodes[0].location, tuple) or not isinstance(self.nodes[1].location, tuple):
+            raise TypeError()
+
+        if self.nodes[1].location[0] == self.nodes[0].location[0]:
+            x = self.nodes[0].location[0]
+            y1 = self.nodes[0].location[1]
+            y2 = self.nodes[1].location[1]
+            points = [(x + size, y1), (x - size, y1), (x - size, y2), (x + size, y2)]
+
+        elif self.nodes[1].location[1] == self.nodes[0].location[1]:
+            x1 = self.nodes[0].location[0]
+            x2 = self.nodes[1].location[0]
+            y = self.nodes[1].location[1]
+            points = [(x1, y + size), (x1, y - size), (x2, y - size), (x2, y + size)]
+
+        else:
+            adj = self.nodes[1].location[0] - self.nodes[0].location[0]
+            op = self.nodes[1].location[1] - self.nodes[0].location[1]
+            angle = math.atan(op/adj)
+
+            x_cha = math.cos(math.pi/2-angle)*size
+            y_cha = math.sin(math.pi/2-angle)*size
+
+            points[0] = (self.nodes[1].location[0] - x_cha, self.nodes[1].location[1] - y_cha)
+            points[1] = (self.nodes[1].location[0] + x_cha, self.nodes[1].location[1] + y_cha)
+            points[2] = (self.nodes[0].location[0] + x_cha, self.nodes[0].location[1] + y_cha)
+            points[3] = (self.nodes[0].location[0] - x_cha, self.nodes[0].location[1] - y_cha)
+
+        self.points = points
 
 
 class Graph:

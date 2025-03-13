@@ -87,7 +87,8 @@ class Board:
         ]
 
         self.generate_hexagons()
-        self.create_buildings()
+        self.create_buildings(self.width / 50 + (1/3))
+        self.calculate_roads(self.width / 125)   # self.width / 5 / (5+(1/3)))
 
     def generate_hexagons(self):
 
@@ -160,7 +161,7 @@ class Board:
         # Loop through each hex in each row
 
     # Sets up the map of all buildings
-    def create_buildings(self):
+    def create_buildings(self, size):
 
         # Loops for every hex - Finds center location betweens each hec for nodes
         for i in range(len(self.point_lst)):
@@ -183,8 +184,6 @@ class Board:
                 top_row = 8
 
             # Goes through every point in hex and sends cords to node
-            print(type(self.grid.node_list[top_row][node].location))
-            print(self.grid.node_list[top_row][node].location)
             if top_row < 6:
 
                 self.grid.node_list[top_row][node].location.append(self.point_lst[i][0])
@@ -204,7 +203,7 @@ class Board:
         # Tells all nodes to average out nodes
         for row in self.grid.node_list:
             for node in row:
-                node.avg_location()
+                node.avg_location(size)
 
     # Prints all buildings to board
     def draw_building(self, screen):
@@ -212,9 +211,22 @@ class Board:
             for node in row:
                 if node.city:
                     pygame.draw.polygon(screen, self.colors[node.player],
-                                        self.__calculate_hexagon(node.location[0], node.location[1], 20))
+                                        node.points)
                 elif node.player == 0:
                     break
                 else:
                     pygame.draw.polygon(screen, self.colors[node.player],
-                                        self.__calculate_diamond(node.location[0], node.location[1], 15))
+                                        node.points)
+
+    # Finds the points between all the nodes
+    def calculate_roads(self, size):
+        for edge in self.grid.edge_list:
+            edge.calc_road_points(size)
+
+    # Prints all buildings to board
+    def draw_roads(self, screen):
+        for edge in self.grid.edge_list:
+            if edge.player == 0:
+                pass
+            else:
+                pygame.draw.polygon(screen, self.colors[edge.player], edge.points)
