@@ -26,6 +26,19 @@ if __name__ == "__main__":
     # Initialize the Board
     board = game_board.Board(SCREENWIDTH, SCREENHEIGHT)
     board.draw_board(screen, dice_vals.result)
+    x = board.grid.node_list[5][4]
+
+    print(x)
+    x.player = 2
+    print(x.player)
+    x.roads[0].player = 2
+    x.roads[1].player = 2
+
+    y = board.grid.node_list[5][2]
+    y.player = 2
+    y.roads[0].player = 2
+
+
 
 
 
@@ -40,8 +53,9 @@ if __name__ == "__main__":
 
         # draws the game board
         board.draw_board(screen, dice_vals.result)
-        board.draw_building(screen)
         board.draw_roads(screen)
+        board.draw_building(screen)
+
 
         # Draws the dice
         dice_vals.draw_die(screen, dice_vals.x, dice_vals.y, dice_vals.size, dice_vals.values[0])  # Draw first die

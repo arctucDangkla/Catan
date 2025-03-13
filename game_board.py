@@ -213,7 +213,7 @@ class Board:
                     pygame.draw.polygon(screen, self.colors[node.player],
                                         node.points)
                 elif node.player == 0:
-                    break
+                    pass
                 else:
                     pygame.draw.polygon(screen, self.colors[node.player],
                                         node.points)

@@ -35,7 +35,7 @@ class Node:
     def __init__(self, name):
         self.name = name
         self.roads = list()
-        self.player = 1
+        self.player = 0
         self.city = False
         self.location = []
         self.points = []
@@ -95,7 +95,7 @@ class Edge:
     def __init__(self, node_a: Node, node_b: Node, player: Player = False):
         self.nodes = [node_a, node_b]
         self.road = player
-        self.player = 1
+        self.player = 0
         self.points = []
         node_a.roads.append(self)
         node_b.roads.append(self)
@@ -110,36 +110,33 @@ class Edge:
         return txt
 
     def calc_road_points(self, size):
-        points = [1, 2, 3, 4]
-
+        #points = [1, 2, 3, 4]
+        points = []
 
         if not isinstance(self.nodes[0].location, tuple) or not isinstance(self.nodes[1].location, tuple):
             raise TypeError()
 
-        if self.nodes[1].location[0] == self.nodes[0].location[0]:
-            x = self.nodes[0].location[0]
-            y1 = self.nodes[0].location[1]
-            y2 = self.nodes[1].location[1]
-            points = [(x + size, y1), (x - size, y1), (x - size, y2), (x + size, y2)]
+        if abs(self.nodes[1].location[0] - self.nodes[0].location[0]) > \
+                abs(self.nodes[1].location[1] - self.nodes[0].location[1]):
 
-        elif self.nodes[1].location[1] == self.nodes[0].location[1]:
-            x1 = self.nodes[0].location[0]
-            x2 = self.nodes[1].location[0]
+            x = self.nodes[0].location[0]
+            y = self.nodes[0].location[1]
+            points += [(x, y+size),(x, y-size)]
+
+            x = self.nodes[1].location[0]
             y = self.nodes[1].location[1]
-            points = [(x1, y + size), (x1, y - size), (x2, y - size), (x2, y + size)]
+            points += [(x, y - size), (x, y + size)]
 
         else:
-            adj = self.nodes[1].location[0] - self.nodes[0].location[0]
-            op = self.nodes[1].location[1] - self.nodes[0].location[1]
-            angle = math.atan(op/adj)
+            x = self.nodes[0].location[0]
+            y = self.nodes[0].location[1]
 
-            x_cha = math.cos(math.pi/2-angle)*size
-            y_cha = math.sin(math.pi/2-angle)*size
+            points += [(x + size, y), (x - size, y)]
+            x = self.nodes[1].location[0]
+            y = self.nodes[1].location[1]
 
-            points[0] = (self.nodes[1].location[0] - x_cha, self.nodes[1].location[1] - y_cha)
-            points[1] = (self.nodes[1].location[0] + x_cha, self.nodes[1].location[1] + y_cha)
-            points[2] = (self.nodes[0].location[0] + x_cha, self.nodes[0].location[1] + y_cha)
-            points[3] = (self.nodes[0].location[0] - x_cha, self.nodes[0].location[1] - y_cha)
+            points += [(x - size, y), (x + size, y)]
+
 
         self.points = points
 
