@@ -1,3 +1,5 @@
+import random
+
 import pygame
 import button
 import game_board
@@ -26,17 +28,26 @@ if __name__ == "__main__":
     # Initialize the Board
     board = game_board.Board(SCREENWIDTH, SCREENHEIGHT)
     board.draw_board(screen, dice_vals.result)
-    x = board.grid.node_list[5][4]
 
-    print(x)
-    x.player = 2
-    print(x.player)
-    x.roads[0].player = 2
-    x.roads[1].player = 2
 
-    y = board.grid.node_list[5][2]
-    y.player = 2
-    y.roads[0].player = 2
+    # Here just for visual testing
+    num = random.randint(0, 12)
+    if num == 6:
+        num = 1
+    other_num = random.randint(0, len(board.grid.node_list[num])-1)
+
+    x = board.grid.node_list[num][other_num]
+    x.player = 1
+    x.roads[0].player = 1
+    x.roads[1].player = 1
+
+
+    y = board.grid.node_list[6][2]
+    y.player = 1
+    y.roads[0].player = 1
+
+    board.find_buildable(1)
+
 
 
 
@@ -55,6 +66,8 @@ if __name__ == "__main__":
         board.draw_board(screen, dice_vals.result)
         board.draw_roads(screen)
         board.draw_building(screen)
+
+        board.draw_buildable(board.grid.build_able, screen)
 
 
         # Draws the dice

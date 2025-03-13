@@ -230,3 +230,15 @@ class Board:
                 pass
             else:
                 pygame.draw.polygon(screen, self.colors[edge.player], edge.points)
+
+    # Shows all spots where a player can build
+    def find_buildable(self, player):
+        print(self.grid.buildable_road(player))
+
+    # Print Buildable
+    def draw_buildable(self, build, screen):
+        for item in build:
+            pygame.draw.circle(screen, (125,0,120), item.center, int(self.hex_size * 0.15))
+
+
+

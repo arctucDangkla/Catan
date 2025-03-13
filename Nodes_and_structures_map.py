@@ -75,8 +75,6 @@ class Node:
         self.points = points
 
 
-
-
 class Edge:
 
     @property
@@ -97,6 +95,7 @@ class Edge:
         self.road = player
         self.player = 0
         self.points = []
+        self.center = 0
         node_a.roads.append(self)
         node_b.roads.append(self)
 
@@ -140,6 +139,13 @@ class Edge:
 
         self.points = points
 
+        x = 0
+        y = 0
+        for point in self.points:
+            x += point[0]
+            y += point[1]
+        self.center = (x/4, y/4)
+
 
 class Graph:
 
@@ -169,8 +175,9 @@ class Graph:
                 self.edge_list.append(a)
                 self.edge_list.append(b)
             for node in range(len(self.node_list[row - 1])):
-                a = Edge(self.node_list[row - 1][node], self.node_list[row - 2][node])
-                self.edge_list.append(a)
+                if row != -5:
+                    a = Edge(self.node_list[row - 1][node], self.node_list[row - 2][node])
+                    self.edge_list.append(a)
 
 
     def build_road(self, node_a: Node, node_b: Node, player: Player):
@@ -193,6 +200,34 @@ class Graph:
                 raise TooCloseToStruc
 
         node_a.structure = player
+
+    # looks very bad rn, will update when player class exist
+    def buildable_road(self, player):
+        build_able = []
+        nodes = []
+        for row in self.node_list:
+            for node in row:
+                if node.player == player:
+                    nodes.append(node)
+
+
+        for road in self.edge_list:
+            if road.player == player:
+                for node in road.nodes:
+                    if node.player == 0:
+                        nodes.append(node)
+
+        for node in nodes:
+            for road in node.roads:
+                if road.player == 0 and road not in build_able:
+                    build_able.append(road)
+
+        self.build_able = build_able
+
+
+
+
+
 
 
 if __name__ == "__main__":
