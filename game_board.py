@@ -2,6 +2,7 @@ import pygame
 import math
 import random
 import Nodes_and_structures_map as Grid
+import button
 
 
 class Board:
@@ -30,6 +31,8 @@ class Board:
         return points
 
     def __init__(self, width, height):
+        self.end_turn_button = button.Button(width-width/10, height-width/10, width=width/10, height=height/10)
+        self.cur_player = 1
         # Type checks inputs and Sets
         if (isinstance(width, int) or isinstance(width, float)) and (
                 isinstance(height, int) or isinstance(height, float)):
@@ -57,7 +60,7 @@ class Board:
             1: (255, 0, 0),
             2: (0, 255, 0),
             3: (0, 0, 255),
-            4: (255, 255, 255)
+            4: (155, 155, 155)
         }
 
         # The numbers for each corresponding hexagon
@@ -146,6 +149,9 @@ class Board:
             pygame.draw.circle(screen, (255, 0, 0), self.robber_pos, int(self.hex_size * 0.4))
         pygame.draw.circle(screen, robber_color, self.robber_pos, int(self.hex_size * 0.3))
 
+        pygame.draw.polygon(screen, (100, 100, 100),
+                            [[self.width, self.height], [self.width*.9, self.height], [self.width*.9, self.height*.9], [self.width, self.height*.9]])
+
     # Shuffles the entire board and numbers
     def shuffle_board(self):
         random.shuffle(self.tile_list)
@@ -218,6 +224,7 @@ class Board:
                     pygame.draw.polygon(screen, self.colors[node.player],
                                         node.points)
 
+
     # Finds the points between all the nodes
     def calculate_roads(self, size):
         for edge in self.grid.edge_list:
@@ -225,11 +232,28 @@ class Board:
 
     # Prints all buildings to board
     def draw_roads(self, screen):
+
         for edge in self.grid.edge_list:
+
             if edge.player == 0:
                 pass
             else:
-                pygame.draw.polygon(screen, self.colors[edge.player], edge.points)
+                color = (0, 0, 0)
+                if edge.player == 1:
+                    color = (155, 0, 0)
+                elif edge.player == 2:
+                    color = (0, 155, 0)
+                elif edge.player == 3:
+                    color = (0, 0, 155)
+                elif edge.player == 4:
+                    color = (55, 55, 55)
+
+                pygame.draw.polygon(screen, color, edge.points)
+
+    def next_player(self):
+        self.cur_player += 1
+        if self.cur_player > 4:
+            self.cur_player = 1
 
     # Shows all spots where a player can build
     def find_buildable(self, player):
@@ -238,7 +262,11 @@ class Board:
     # Print Buildable
     def draw_buildable(self, build, screen):
         for item in build:
+            # x = button.Button(item.center[0], item.center[1], width=int(self.hex_size * 0.15), height=int(self.hex_size * 0.15))
             pygame.draw.circle(screen, (125,0,120), item.center, int(self.hex_size * 0.15))
+            """if x.draw(screen):
+                item.player = 1"""
+
 
 
 

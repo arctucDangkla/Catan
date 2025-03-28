@@ -1,4 +1,5 @@
 import math
+import button
 
 # Temp class for writing
 class Player:
@@ -96,6 +97,7 @@ class Edge:
         self.player = 0
         self.points = []
         self.center = 0
+        self.button = None
         node_a.roads.append(self)
         node_b.roads.append(self)
 
@@ -145,6 +147,7 @@ class Edge:
             x += point[0]
             y += point[1]
         self.center = (x/4, y/4)
+        self.button = button.Button(self.center[0]-size, self.center[1]-size, width=size*2, height=size*2)
 
 
 class Graph:
@@ -223,6 +226,9 @@ class Graph:
                     build_able.append(road)
 
         self.build_able = build_able
+
+
+
 
 
 

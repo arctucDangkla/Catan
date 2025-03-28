@@ -48,12 +48,15 @@ if __name__ == "__main__":
 
     board.find_buildable(1)
 
+    show_buildable = True
+
 
 
 
 
 
     while running:
+
         # Makes the background for the game.
         screen.fill((79, 166, 235))
 
@@ -69,7 +72,12 @@ if __name__ == "__main__":
 
         board.draw_buildable(board.grid.build_able, screen)
 
-
+        if show_buildable:
+            board.draw_buildable(board.grid.build_able, screen)
+            for x in board.grid.build_able:
+                if x.button.draw(screen):
+                    x.player = 1
+                    board.grid.buildable_road(1)
         # Draws the dice
         dice_vals.draw_die(screen, dice_vals.x, dice_vals.y, dice_vals.size, dice_vals.values[0])  # Draw first die
         dice_vals.draw_die(screen, dice_vals.x + dice_vals.size + dice_vals.spacing, dice_vals.y, dice_vals.size,
