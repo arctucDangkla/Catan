@@ -2,7 +2,7 @@ import pygame
 
 
 class Button:
-    def __init__(self, x, y, image:str="none", width=0, height=0, scale=1.0):
+    def __init__(self, screen, x, y, image:str="none", width=0, height=0, scale=1.0):
         # If the button is to be transparent, make a transparent surface
         if image.lower() == "none":
             self.image = pygame.Surface((width, height), pygame.SRCALPHA, 32)
@@ -14,9 +14,10 @@ class Button:
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
         self.clicked = False
-        
+        self.screen = screen
+
     # Function that draws the button onto the screen.
-    def draw(self, screen):
+    def draw(self):
         action = False
         # Gets the mouse position
         pos = pygame.mouse.get_pos()
@@ -31,5 +32,5 @@ class Button:
             self.clicked = False
 
         # Actually draws the button
-        screen.blit(self.image, self.rect.topleft)
+        self.screen.blit(self.image, self.rect.topleft)
         return action
