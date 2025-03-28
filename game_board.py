@@ -30,8 +30,9 @@ class Board:
             points.append((x, y))
         return points
 
-    def __init__(self, width, height):
-        self.end_turn_button = button.Button(width-width/10, height-width/10, width=width/10, height=height/10)
+    def __init__(self, screen, width, height):
+        self.screen = screen
+        #self.end_turn_button = button.Button(width-width/10, height-width/10, width=width/10, height=height/10)
         self.cur_player = 1
         # Type checks inputs and Sets
         if (isinstance(width, int) or isinstance(width, float)) and (
@@ -91,7 +92,7 @@ class Board:
 
         self.generate_hexagons()
         self.create_buildings(self.width / 50 + (1/3))
-        self.calculate_roads(self.width / 125)   # self.width / 5 / (5+(1/3)))
+        self.calculate_roads(self.screen, self.width / 125)   # self.width / 5 / (5+(1/3)))
 
     def generate_hexagons(self):
 
@@ -226,9 +227,9 @@ class Board:
 
 
     # Finds the points between all the nodes
-    def calculate_roads(self, size):
+    def calculate_roads(self, screen, size):
         for edge in self.grid.edge_list:
-            edge.calc_road_points(size)
+            edge.calc_road_points(screen, size)
 
     # Prints all buildings to board
     def draw_roads(self, screen):

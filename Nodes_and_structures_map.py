@@ -110,7 +110,7 @@ class Edge:
             txt = "Path " + txt
         return txt
 
-    def calc_road_points(self, size):
+    def calc_road_points(self, screen, size):
         #points = [1, 2, 3, 4]
         points = []
 
@@ -147,7 +147,7 @@ class Edge:
             x += point[0]
             y += point[1]
         self.center = (x/4, y/4)
-        self.button = button.Button(self.center[0]-size, self.center[1]-size, width=size*2, height=size*2)
+        self.button = button.Button(screen, self.center[0]-size, self.center[1]-size, width=size*2, height=size*2)
 
 
 class Graph:
