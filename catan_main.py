@@ -68,14 +68,18 @@ if __name__ == "__main__":
         board.draw_roads(screen)
         board.draw_building(screen)
 
-        board.draw_buildable(board.grid.build_able, screen)
+
 
         if show_buildable:
+            # Check does the player rror
             board.draw_buildable(board.grid.build_able, screen)
             for x in board.grid.build_able:
                 if x.button.draw():
+                    # player.minus
                     x.player = 1
                     board.grid.buildable_road(1)
+
+            #
         # Draws the dice
         dice_vals.draw_die(screen, dice_vals.x, dice_vals.y, dice_vals.size, dice_vals.values[0])  # Draw first die
         dice_vals.draw_die(screen, dice_vals.x + dice_vals.size + dice_vals.spacing, dice_vals.y, dice_vals.size,
