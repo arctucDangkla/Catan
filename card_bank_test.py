@@ -35,19 +35,19 @@ class CardBankTest(unittest.TestCase):
 
     def test_init_invalid1(self):
         with self.assertRaises(TypeError):
-            CardBank(3)
+            CardBank(123)
 
     def test_init_invalid2(self):
         with self.assertRaises(TypeError):
-            CardBank(3958)
+            CardBank(541)
 
     def test_init_invalid3(self):
         with self.assertRaises(ValueError):
-            CardBank('invalid')
+            CardBank('error')
 
     def test_init_invalid4(self):
         with self.assertRaises(ValueError):
-            CardBank('1234')
+            CardBank('invalid')
 
     # REMOVE TESTS #
     # Tests to remove a card
@@ -172,7 +172,7 @@ class CardBankTest(unittest.TestCase):
 
     # Makes sure that you cannot remove zero
     def test_remove_zero(self):
-        bank = CardBank('game')
+        bank = CardBank('player')
         resources = ['Wo', 'O', 'S', 'B', 'Wh', 'K', 'P', 'V']
         rand_resource = random.choice(resources)
         with self.assertRaises(ValueError):
@@ -180,7 +180,7 @@ class CardBankTest(unittest.TestCase):
 
     # Makes sure that type error is raised on invalid int
     def test_remove_invalid_type1(self):
-        bank = CardBank('game')
+        bank = CardBank('player')
         resources = ['Wo', 'O', 'S', 'B', 'Wh', 'K', 'P', 'V']
         rand_resource = random.choice(resources)
         with self.assertRaises(TypeError):
@@ -188,13 +188,13 @@ class CardBankTest(unittest.TestCase):
 
     # Makes sure that type error is raised on invalid str
     def test_remove_invalid_type2(self):
-        bank = CardBank('game')
+        bank = CardBank('player')
         with self.assertRaises(TypeError):
             bank.remove_card(34)
 
     # Makes sure that value error is raised on improper resource
     def test_remove_invalid_card(self):
-        bank = CardBank('game')
+        bank = CardBank('player')
         with self.assertRaises(ValueError):
             bank.remove_card('invalid')
 
