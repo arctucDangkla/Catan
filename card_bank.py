@@ -130,9 +130,9 @@ class CardBank:
             # If it's development cards, add all total development cards
             if resource == 'D':
                 dev_amount = self.bank['K'] + self.bank['P'] + self.bank['V']
-                self.draw_text(str(dev_amount), textx, texty)
+                self.draw_text(screen, str(dev_amount), textx, texty)
             else:
-                self.draw_text(str(self.bank[resource]), textx, texty)
+                self.draw_text(screen, str(self.bank[resource]), textx, texty)
 
 
             cardy += 100
