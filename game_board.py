@@ -180,8 +180,10 @@ class Board:
                             [[self.width*.8, self.height], [self.width * .9, self.height],
                              [self.width * .9, self.height * .9], [self.width * .8, self.height * .9]])
         # Draw the dice
-        self.dice_vals.draw_die(screen, self.dice_vals.x, self.dice_vals.y, self.dice_vals.size, self.dice_vals.values[0])  # Draw first die
-        self.dice_vals.draw_die(screen, self.dice_vals.x + self.dice_vals.size + self.dice_vals.spacing, self.dice_vals.y, self.dice_vals.size,
+        self.dice_vals.draw_die(screen, self.dice_vals.x, self.dice_vals.y, self.dice_vals.size,
+                                self.dice_vals.values[0])  # Draw first die
+        self.dice_vals.draw_die(screen, self.dice_vals.x + self.dice_vals.size + self.dice_vals.spacing,
+                                self.dice_vals.y, self.dice_vals.size,
                                 self.dice_vals.values[1])  # Draw second die
         # Checks for dice roll
         if self.dice_button.draw():
