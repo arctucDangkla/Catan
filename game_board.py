@@ -210,7 +210,7 @@ class Board:
         # Tells all nodes to average out nodes
         for row in self.grid.node_list:
             for node in row:
-                node.avg_location(size)
+                node.avg_location(size, self.screen)
 
     # Prints all buildings to board
     def draw_building(self, screen):
@@ -257,16 +257,19 @@ class Board:
             self.cur_player = 1
 
     # Shows all spots where a player can build
-    def find_buildable(self, player):
-        print(self.grid.buildable_road(player))
+    def find_buildable_road(self, player):
+        self.grid.buildable_road(player)
+
+    def find_buildable_house(self, player):
+        self.grid.buildable_house(player)
 
     # Print Buildable
     def draw_buildable(self, build, screen):
         for item in build:
-            # x = button.Button(item.center[0], item.center[1], width=int(self.hex_size * 0.15), height=int(self.hex_size * 0.15))
-            pygame.draw.circle(screen, (125,0,120), item.center, int(self.hex_size * 0.15))
-            """if x.draw(screen):
-                item.player = 1"""
+            pygame.draw.circle(screen, (125,0,120), item.location, int(self.hex_size * 0.15))
+
+
+
 
 
 

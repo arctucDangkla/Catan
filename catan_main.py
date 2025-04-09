@@ -40,14 +40,15 @@ if __name__ == "__main__":
     x.roads[1].player = 1
 
 
+
     y = board.grid.node_list[6][2]
     y.player = 1
     y.roads[0].player = 1
+    board.grid.node_list[4][2].roads[1].player = 1
 
-    board.find_buildable(1)
 
-    show_buildable = True
-
+    show_buildable_road = False
+    show_buildable_house = True
 
 
 
@@ -68,14 +69,23 @@ if __name__ == "__main__":
         board.draw_roads(screen)
         board.draw_building(screen)
 
-        board.draw_buildable(board.grid.build_able, screen)
 
-        if show_buildable:
+        if show_buildable_road:
+            board.find_buildable_road(1)
             board.draw_buildable(board.grid.build_able, screen)
             for x in board.grid.build_able:
                 if x.button.draw():
                     x.player = 1
                     board.grid.buildable_road(1)
+        elif show_buildable_house:
+            board.find_buildable_house(1)
+            board.draw_buildable(board.grid.build_able, screen)
+            for x in board.grid.build_able:
+                if x.button.draw():
+                    x.player = 1
+                    board.grid.buildable_road(1)
+
+
         # Draws the dice
         dice_vals.draw_die(screen, dice_vals.x, dice_vals.y, dice_vals.size, dice_vals.values[0])  # Draw first die
         dice_vals.draw_die(screen, dice_vals.x + dice_vals.size + dice_vals.spacing, dice_vals.y, dice_vals.size,
