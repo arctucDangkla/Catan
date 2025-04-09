@@ -91,8 +91,7 @@ if __name__ == "__main__":
             for x in board.grid.build_able:
                 if x.button.draw():
                     x.player = board.cur_player
-                    board.grid.buildable_road(board.cur_player)
-                    for road in board.grid.edge_list:
+                    board.grid.buildable_road(board.cur_player)                   for road in board.grid.edge_list:
                         if road.player == board.cur_player:
                             val = longest_path.temp_name(road, board.cur_player, [], [])
                             if val > longest:
