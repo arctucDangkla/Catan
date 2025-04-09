@@ -53,7 +53,7 @@ class Board:
 
         # The colors of each different material and player in a dictionary
         self.colors = {
-            "Wo": (81, 125, 25),
+            "Wo": (50, 90, 10),
             "B": (136, 57, 10),
             "Wh": (230, 153, 0),
             "O": (123, 111, 131),
@@ -279,4 +279,4 @@ class Board:
     # Print Buildable
     def draw_buildable(self, build, screen):
         for item in build:
-            pygame.draw.circle(screen, (125, 0, 120), item.location, int(self.hex_size * 0.15))
+            pygame.draw.circle(screen, (135, 206, 235), item.location, int(self.hex_size * 0.15))
