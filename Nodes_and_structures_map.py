@@ -39,13 +39,12 @@ class Node:
         self.player = 0
         self.city = False
         self.location = []
-        self.button = None
         self.points = []
 
     def __str__(self):
         return f"{self.name}"
 
-    def avg_location(self, rad, screen):
+    def avg_location(self, rad):
         x = 0
         y = 0
 
@@ -59,9 +58,6 @@ class Node:
         y /= len(self.location)
 
         self.location = (x, y)
-        self.button = button.Button(screen, self.location[0] - rad, self.location[1] - rad, width=rad * 2,
-                                    height=rad * 2)
-
         if self.city:
             pass
         else:
@@ -100,7 +96,7 @@ class Edge:
         self.road = player
         self.player = 0
         self.points = []
-        self.location = 0
+        self.center = 0
         self.button = None
         node_a.roads.append(self)
         node_b.roads.append(self)
@@ -150,8 +146,8 @@ class Edge:
         for point in self.points:
             x += point[0]
             y += point[1]
-        self.location = (x/4, y/4)
-        self.button = button.Button(screen, self.location[0]-size, self.location[1]-size, width=size*2, height=size*2)
+        self.center = (x/4, y/4)
+        self.button = button.Button(screen, self.center[0]-size, self.center[1]-size, width=size*2, height=size*2)
 
 
 class Graph:
@@ -230,27 +226,6 @@ class Graph:
                     build_able.append(road)
 
         self.build_able = build_able
-
-    # looks very bad rn, will update when player class exist
-    def buildable_house(self, player):
-        build_able = []
-
-        for road in self.edge_list:
-            if road.player == player:
-
-
-                for node in road.nodes:
-
-                    if self.status_buildable(node):
-                        build_able.append(node)
-        self.build_able = build_able
-
-    def status_buildable(self, node: Node):
-        for road in node.roads:
-            if road.nodes[0].player != 0 or road.nodes[1].player != 0:
-                return False
-        return True
-
 
 
 

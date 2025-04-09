@@ -2,6 +2,7 @@ import pygame
 import math
 import random
 import Nodes_and_structures_map as Grid
+from dice import Dice
 import button
 
 
@@ -32,8 +33,7 @@ class Board:
 
     def __init__(self, screen, width, height):
         self.screen = screen
-        self.background = []
-        self.hex_boarder = []
+        #self.end_turn_button = button.Button(width-width/10, height-width/10, width=width/10, height=height/10)
         self.cur_player = 1
         # Type checks inputs and Sets
         if (isinstance(width, int) or isinstance(width, float)) and (
@@ -53,9 +53,9 @@ class Board:
 
         # The colors of each different material and player in a dictionary
         self.colors = {
-            "Wo": (50, 90, 10),
-            "B": (136, 57, 10),
-            "Wh": (230, 153, 0),
+            "Wo": (81, 125, 25),
+            "B": (156, 67, 0),
+            "Wh": (240, 173, 0),
             "O": (123, 111, 131),
             "S": (143, 206, 0),
             "D": (194, 178, 128),
@@ -74,9 +74,13 @@ class Board:
         # Font info
         self.font = pygame.font.Font(None, 36)  # Default font, size 36 for text
 
+        # Dice info
+        self.dice_vals = Dice(self.width, self.height)
+        self.dice_button = button.Button(screen, self.dice_vals.x, self.dice_vals.y, "none", self.dice_vals.total_width, self.dice_vals.size)
+
         # Size info for the hexagon
         self.start_x = self.width * 0.35  # Starting x pos of the grid
-        self.start_y = self.height / 6  # Starting y pos of the grid
+        self.start_y = self.height / 8  # Starting y pos of the grid
         self.hex_size = self.height / 10  # Size of the hexagon
         self.hex_diff = self.hex_size * 1.875  # Difference between hexagons horizontally
         self.row_height = self.hex_diff - 21  # Difference between hexagons vertically
@@ -92,9 +96,8 @@ class Board:
         ]
 
         self.generate_hexagons()
-        self.create_buildings(self.width / 50 + (1 / 3))
-        self.calculate_roads(self.screen, self.width / 125)  # self.width / 5 / (5+(1/3)))
-
+        self.create_buildings(self.width / 50 + (1/3))
+        self.calculate_roads(self.screen, self.width / 125)   # self.width / 5 / (5+(1/3)))
 
     def generate_hexagons(self):
 
@@ -104,14 +107,11 @@ class Board:
                 x = self.start_x + self.hex_diff * i - (hex_count % 3) * self.hex_size + 5 * (hex_count % 3)
                 y = self.start_y + self.row_height * row_offset
 
-
                 # Make and draw the hexagon
                 self.point_lst.append(list(self.__calculate_hexagon(x, y, self.hex_size)))
-                self.background.append(list(self.__calculate_hexagon(x, y, self.hex_size*1.1)))
-                self.hex_boarder.append(list(self.__calculate_hexagon(x, y, self.hex_size * 1.025)))
 
     # Method that will draw the game board
-    def draw_board(self, screen, roll):
+    def draw_board(self, screen):
         # Color info for different parts of the board
         number_color = (0, 0, 0)  # Black color for numbers
         robber_color = (50, 50, 50)  # Dark gray for the robber
@@ -119,10 +119,7 @@ class Board:
         # The index position for tiles and number lists
         tile_idx = 0
         num_idx = 0
-        for point in self.background:
-            pygame.draw.polygon(screen, (194, 178, 128), point)
-        for point in self.hex_boarder:
-                pygame.draw.polygon(screen, (0, 0, 0), point)
+
         for point in self.point_lst:
             pygame.draw.polygon(screen, self.colors[self.tile_list[tile_idx]], point)
 
@@ -141,8 +138,8 @@ class Board:
                 text_rect = number_text.get_rect(center=(x, y))
 
                 # If the current tile equals the roll, highlight the chip.
-                if self.numbers[num_idx] == roll:
-                    pygame.draw.circle(screen, (255, 255, 255), (x, y), int(self.hex_size * .4))
+                if self.numbers[num_idx] == self.dice_vals.result:
+                    pygame.draw.circle(screen, (255, 0, 0), (x, y), int(self.hex_size * .4))
 
                 # Draws a game chip to make number more visible
                 pygame.draw.circle(screen, self.colors["D"], (x, y), int(self.hex_size * 0.3))
@@ -154,18 +151,23 @@ class Board:
             tile_idx += 1
         # Draws the robber after all the board is made. If the roll is 7,
         # highlight the robber.
-        if roll == 7:
-            pygame.draw.circle(screen, (255, 255, 255), self.robber_pos, int(self.hex_size * 0.4))
+        if self.dice_vals.result == 7:
+            pygame.draw.circle(screen, (255, 0, 0), self.robber_pos, int(self.hex_size * 0.4))
         pygame.draw.circle(screen, robber_color, self.robber_pos, int(self.hex_size * 0.3))
 
-        pygame.draw.polygon(screen, self.colors[self.cur_player],
-                            [[self.width, self.height], [self.width * .9, self.height],
-                             [self.width * .9, self.height * .9], [self.width, self.height * .9]])
-        pygame.draw.polygon(screen, (100,100,100),
-                            [[self.width*.8, self.height], [self.width * .9, self.height],
-                             [self.width * .9, self.height * .9], [self.width  *.8, self.height * .9]])
+        pygame.draw.polygon(screen, (100, 100, 100),
+                            [[self.width, self.height], [self.width*.9, self.height], [self.width*.9, self.height*.9], [self.width, self.height*.9]])
+        # Draw the dice
+        self.dice_vals.draw_die(screen, self.dice_vals.x, self.dice_vals.y, self.dice_vals.size, self.dice_vals.values[0])  # Draw first die
+        self.dice_vals.draw_die(screen, self.dice_vals.x + self.dice_vals.size + self.dice_vals.spacing, self.dice_vals.y, self.dice_vals.size,
+                           self.dice_vals.values[1])  # Draw second die
+        # Checks for dice roll
+        if self.dice_button.draw():
+            self.dice_vals.roll_dice()
 
-
+        # Builds structures
+        self.draw_building(screen)
+        self.draw_roads(screen)
 
     # Shuffles the entire board and numbers
     def shuffle_board(self):
@@ -224,7 +226,7 @@ class Board:
         # Tells all nodes to average out nodes
         for row in self.grid.node_list:
             for node in row:
-                node.avg_location(size, self.screen)
+                node.avg_location(size)
 
     # Prints all buildings to board
     def draw_building(self, screen):
@@ -238,6 +240,7 @@ class Board:
                 else:
                     pygame.draw.polygon(screen, self.colors[node.player],
                                         node.points)
+
 
     # Finds the points between all the nodes
     def calculate_roads(self, screen, size):
@@ -270,13 +273,17 @@ class Board:
             self.cur_player = 1
 
     # Shows all spots where a player can build
-    def find_buildable_road(self, player):
-        self.grid.buildable_road(player)
-
-    def find_buildable_house(self, player):
-        self.grid.buildable_house(player)
+    def find_buildable(self, player):
+        print(self.grid.buildable_road(player))
 
     # Print Buildable
     def draw_buildable(self, build, screen):
         for item in build:
-            pygame.draw.circle(screen, (135, 206, 235), item.location, int(self.hex_size * 0.15))
+            # x = button.Button(item.center[0], item.center[1], width=int(self.hex_size * 0.15), height=int(self.hex_size * 0.15))
+            pygame.draw.circle(screen, (125,0,120), item.center, int(self.hex_size * 0.15))
+            """if x.draw(screen):
+                item.player = 1"""
+
+
+
+
