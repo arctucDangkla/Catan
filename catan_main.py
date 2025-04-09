@@ -1,8 +1,7 @@
 import random
-
-import pygame
-
 import Player
+import pygame
+import button
 import game_board
 from card_bank import CardBank
 from menu import Menu
@@ -29,6 +28,7 @@ if __name__ == "__main__":
 
 
 
+    #
     # Initialize the Board
     board = game_board.Board(screen, SCREENWIDTH, SCREENHEIGHT)
     game_bank = CardBank("game")
@@ -37,30 +37,44 @@ if __name__ == "__main__":
 
 
     # Here just for visual testing
-    num = random.randint(0, 12)
+    """num = random.randint(0, 12)
     if num == 6:
         num = 1
-    other_num = random.randint(0, len(board.grid.node_list[num])-1)
+    other_num = random.randint(0, len(board.grid.node_list[num])-1)"""
 
-    x = board.grid.node_list[num][other_num]
-    x.player = 1
-    x.roads[0].player = 1
-    x.roads[1].player = 1
-
-
-    y = board.grid.node_list[6][2]
-    y.player = 1
-    y.roads[0].player = 1
-
-    board.find_buildable(1)
-
-    show_buildable = True
+    temp_player_count = 8
+    while temp_player_count != 0:
+        num = random.randint(0, len(board.grid.node_list)-1)
+        if num == 6:
+            num = 1
+        other_num = random.randint(0, len(board.grid.node_list[num])-1)
 
 
+        x = board.grid.node_list[num][other_num]
+        if x.player == 0:
+            x.player = board.cur_player
 
+            picked = False
+            picked_road = 0
+            while not picked:
+                picked_road = random.randint(0, len(x.roads)-1)
+                if x.roads[picked_road].player == 0:
+                    picked = True
+            x.roads[picked_road].player = board.cur_player
 
+            board.next_player()
+            temp_player_count -= 1
 
+    longest = 4
+    longest_player = 0
 
+    show_buildable_road = False
+    show_buildable_house = False
+    No_builds = True
+
+    next_button = button.Button(screen, SCREENWIDTH*.9, SCREENHEIGHT*.9, "none", SCREENWIDTH*.1, SCREENHEIGHT*.1)
+    build_toggle_button = button.Button(screen, SCREENWIDTH * .8, SCREENHEIGHT * .9, "none", SCREENWIDTH * .1,
+                                SCREENHEIGHT * .1)
     while running:
 
         # Makes the background for the game.
