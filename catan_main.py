@@ -31,39 +31,44 @@ if __name__ == "__main__":
 
 
     # Here just for visual testing
-    num = random.randint(0, 12)
+    """num = random.randint(0, 12)
     if num == 6:
         num = 1
-    other_num = random.randint(0, len(board.grid.node_list[num])-1)
+    other_num = random.randint(0, len(board.grid.node_list[num])-1)"""
 
-    x = board.grid.node_list[num][other_num]
-    x.player = 1
-    x.roads[0].player = 1
-    x.roads[1].player = 1
+    temp_player_count = 8
+    while temp_player_count != 0:
+        num = random.randint(0, len(board.grid.node_list)-1)
+        if num == 6:
+            num = 1
+        other_num = random.randint(0, len(board.grid.node_list[num])-1)
 
 
+        x = board.grid.node_list[num][other_num]
+        if x.player == 0:
+            x.player = board.cur_player
 
-    y = board.grid.node_list[6][2]
-    y.player = 1
-    y.roads[0].player = 1
-    board.grid.node_list[4][2].roads[1].player = 1
-    board.grid.node_list[4][1].roads[2].player = 1
+            picked = False
+            picked_road = 0
+            while not picked:
+                picked_road = random.randint(0, len(x.roads)-1)
+                if x.roads[picked_road].player == 0:
+                    picked = True
+            x.roads[picked_road].player = board.cur_player
 
+            board.next_player()
+            temp_player_count -= 1
 
     longest = 4
     longest_player = 0
 
-
-
-
-
-    show_buildable_road = True
+    show_buildable_road = False
     show_buildable_house = False
+    No_builds = True
 
-
-
-
-
+    next_button = button.Button(screen, SCREENWIDTH*.9, SCREENHEIGHT*.9, "none", SCREENWIDTH*.1, SCREENHEIGHT*.1)
+    build_toggle_button = button.Button(screen, SCREENWIDTH * .8, SCREENHEIGHT * .9, "none", SCREENWIDTH * .1,
+                                SCREENHEIGHT * .1)
     while running:
 
         # Makes the background for the game.
@@ -81,28 +86,28 @@ if __name__ == "__main__":
 
 
         if show_buildable_road:
-            board.find_buildable_road(1)
+            board.find_buildable_road(board.cur_player)
             board.draw_buildable(board.grid.build_able, screen)
             for x in board.grid.build_able:
                 if x.button.draw():
-                    x.player = 1
-                    board.grid.buildable_road(1)
+                    x.player = board.cur_player
+                    board.grid.buildable_road(board.cur_player)
                     for road in board.grid.edge_list:
-                        if road.player == 1:
-                            val = longest_path.temp_name(road, 1, [], [])
+                        if road.player == board.cur_player:
+                            val = longest_path.temp_name(road, board.cur_player, [], [])
                             if val > longest:
                                 longest = val
-                                longest_player = 1
+                                longest_player = board.cur_player
                     print(f"{longest} is from player {longest_player}")
 
 
         elif show_buildable_house:
-            board.find_buildable_house(1)
+            board.find_buildable_house(board.cur_player)
             board.draw_buildable(board.grid.build_able, screen)
             for x in board.grid.build_able:
                 if x.button.draw():
-                    x.player = 1
-                    board.grid.buildable_road(1)
+                    x.player = board.cur_player
+                    board.grid.buildable_road(board.cur_player)
 
 
         # Draws the dice
@@ -112,6 +117,12 @@ if __name__ == "__main__":
         # Checks for dice roll
         if dice_button.draw():
             dice_vals.roll_dice()
+
+        if next_button.draw():
+            board.next_player()
+
+        if build_toggle_button.draw():
+            show_buildable_house, show_buildable_road, No_builds = show_buildable_road, No_builds, show_buildable_house
 
         pygame.display.update()
 
