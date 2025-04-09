@@ -233,20 +233,16 @@ class Graph:
 
     # looks very bad rn, will update when player class exist
     def buildable_house(self, player):
-        print("start")
         build_able = []
 
         for road in self.edge_list:
             if road.player == player:
-                print("main")
+
 
                 for node in road.nodes:
-                    print("tag")
-                    print(node.player)
-                    print(self.status_buildable(node))
+
                     if self.status_buildable(node):
                         build_able.append(node)
-        print(build_able)
         self.build_able = build_able
 
     def status_buildable(self, node: Node):

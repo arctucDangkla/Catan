@@ -5,6 +5,8 @@ import button
 import game_board
 import dice
 
+import longest_path
+
 
 if __name__ == "__main__":
     pygame.init()
@@ -45,10 +47,18 @@ if __name__ == "__main__":
     y.player = 1
     y.roads[0].player = 1
     board.grid.node_list[4][2].roads[1].player = 1
+    board.grid.node_list[4][1].roads[2].player = 1
 
 
-    show_buildable_road = False
-    show_buildable_house = True
+    longest = 4
+    longest_player = 0
+
+
+
+
+
+    show_buildable_road = True
+    show_buildable_house = False
 
 
 
@@ -77,6 +87,15 @@ if __name__ == "__main__":
                 if x.button.draw():
                     x.player = 1
                     board.grid.buildable_road(1)
+                    for road in board.grid.edge_list:
+                        if road.player == 1:
+                            val = longest_path.temp_name(road, 1, [], [])
+                            if val > longest:
+                                longest = val
+                                longest_player = 1
+                    print(f"{longest} is from player {longest_player}")
+
+
         elif show_buildable_house:
             board.find_buildable_house(1)
             board.draw_buildable(board.grid.build_able, screen)
