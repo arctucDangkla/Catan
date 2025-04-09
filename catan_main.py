@@ -22,6 +22,7 @@ if __name__ == "__main__":
     dice_vals = dice.Dice(SCREENWIDTH, SCREENHEIGHT)
     running = True
 
+
     # Initialize Buttons
     dice_button = button.Button(screen, dice_vals.x, dice_vals.y, "none", dice_vals.total_width, dice_vals.size)
 
@@ -89,9 +90,11 @@ if __name__ == "__main__":
             board.find_buildable_road(board.cur_player)
             board.draw_buildable(board.grid.build_able, screen)
             for x in board.grid.build_able:
+
                 if x.button.draw():
                     x.player = board.cur_player
-                    board.grid.buildable_road(board.cur_player)                   for road in board.grid.edge_list:
+                    board.grid.buildable_road(board.cur_player)
+                    for road in board.grid.edge_list:
                         if road.player == board.cur_player:
                             val = longest_path.temp_name(road, board.cur_player, [], [])
                             if val > longest:
@@ -102,6 +105,7 @@ if __name__ == "__main__":
 
         elif show_buildable_house:
             board.find_buildable_house(board.cur_player)
+
             board.draw_buildable(board.grid.build_able, screen)
             for x in board.grid.build_able:
                 if x.button.draw():

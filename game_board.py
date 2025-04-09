@@ -2,8 +2,6 @@ import pygame
 import math
 import random
 import Nodes_and_structures_map as Grid
-import button
-
 
 class Board:
     # To make the hexagons for the board
@@ -97,9 +95,10 @@ class Board:
 
 
     def generate_hexagons(self):
-
+        num_count = 0
+        tile_count = 0
         for hex_count, row_offset in self.rows:
-            num_count = 0
+
             for i in range(hex_count):
                 # The center x and y positions of the current hex
                 x = self.start_x + self.hex_diff * i - (hex_count % 3) * self.hex_size + 5 * (hex_count % 3)
@@ -108,11 +107,11 @@ class Board:
 
                 # Make and draw the hexagon
                 if self.tile_list[hex_count] == 'D':
-                    self.point_lst.append([self.__calculate_hexagon(x, y, self.hex_size), True, 0, self.tile_list[hex_count]])
+                    self.point_lst.append([self.__calculate_hexagon(x, y, self.hex_size), True, 0, self.tile_list[tile_count]])
                 else:
-                    self.point_lst.append([self.__calculate_hexagon(x, y, self.hex_size), True, 0, self.tile_list[hex_count]])
+                    self.point_lst.append([self.__calculate_hexagon(x, y, self.hex_size), False, self.numbers[num_count], self.tile_list[tile_count]])
                     num_count += 1
-
+                tile_count += 1
 
                 self.background.append(list(self.__calculate_hexagon(x, y, self.hex_size*1.1)))
                 self.hex_boarder.append(list(self.__calculate_hexagon(x, y, self.hex_size * 1.025)))
@@ -131,19 +130,18 @@ class Board:
         for point in self.background:
             pygame.draw.polygon(screen, (194, 178, 128), point)
         for point in self.hex_boarder:
-                pygame.draw.polygon(screen, (0, 0, 0), point)
+            pygame.draw.polygon(screen, (0, 0, 0), point)
 
 
         for point in self.point_lst:
             pygame.draw.polygon(screen, self.colors[point[3]], point[0])
-
-            x = sum([num[0] for num in point]) / 6
-            y = sum([num[1] for num in point]) / 6
+            x = sum([num[0] for num in point[0]]) / 6
+            y = sum([num[1] for num in point[0]]) / 6
 
             # If it is the desert tile, move the robber, don't add number.
-            if point[3] == "D":
-
+            if point[3] == 'D':
                 self.robber_pos = [x, y]
+
 
             # Otherwise add the number like a normal tile
             else:
@@ -174,8 +172,6 @@ class Board:
         pygame.draw.polygon(screen, (100,100,100),
                             [[self.width*.8, self.height], [self.width * .9, self.height],
                              [self.width * .9, self.height * .9], [self.width * .8, self.height * .9]])
-
-
 
     # Shuffles the entire board and numbers
     def shuffle_board(self):
