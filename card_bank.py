@@ -1,6 +1,21 @@
 import pygame
 from button import Button
 
+def draw_card(card, x, y, screen) -> Button:
+    if card == 'Wo':
+        return Button(screen, x, y, "images/resources_wood.png", 0, 0, 0.2)
+    elif card == 'O':
+        return Button(screen, x, y, "images/resources_ore.png", 0, 0, 0.2)
+    elif card == 'S':
+        return Button(screen, x, y, "images/resources_sheep.png", 0, 0, 0.2)
+    elif card == 'B':
+        return Button(screen, x, y, "images/resources_brick.png", 0, 0, 0.2)
+    elif card == 'Wh':
+        return Button(screen, x, y, "images/resources_wheat.png", 0, 0, 0.2)
+    else:
+        return Button(screen, x, y, "images/devcard_back.png", 0, 0, 0.2)
+
+
 class CardBank:
     # User can either be 'game' or 'player'
     # where game is for the game's bank
@@ -86,19 +101,6 @@ class CardBank:
     #sheep_button = button.Button(0, SCREENHEIGHT * .10, "images/resources_sheep.png", 0, 0, 0.2)
     # origin width = 326 | scaled width = 65.2
     # origin height = ??? | scaled height = 95.8
-    def draw_card(self, card, x, y, screen) -> Button:
-        if card == 'Wo':
-            return Button(screen, x, y, "images/resources_wood.png", 0, 0, 0.2)
-        elif card == 'O':
-            return Button(screen, x, y, "images/resources_ore.png", 0, 0, 0.2)
-        elif card == 'S':
-            return Button(screen, x, y, "images/resources_sheep.png", 0, 0, 0.2)
-        elif card == 'B':
-            return Button(screen, x, y, "images/resources_brick.png", 0, 0, 0.2)
-        elif card == 'Wh':
-            return Button(screen, x, y, "images/resources_wheat.png", 0, 0, 0.2)
-        else:
-            return Button(screen, x, y, "images/devcard_back.png", 0, 0, 0.2)
 
     def draw_text(self, screen, text, x, y):
         text_col = (255, 255, 255)
@@ -124,7 +126,7 @@ class CardBank:
         cardy = 0
         texty = 30
         for resource in resources:
-            temp = self.draw_card(resource, cardx, cardy, screen)
+            temp = draw_card(resource, cardx, cardy, screen)
             pygame.draw.rect(screen, color, [temp.rect.left, temp.rect.top, temp.rect.width + 3, temp.rect.height + 5])
             temp.draw()
             # If it's development cards, add all total development cards

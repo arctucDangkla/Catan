@@ -1,9 +1,8 @@
 import random
-
+import Player
 import pygame
 import button
 import game_board
-import dice
 from card_bank import CardBank
 from menu import Menu
 
@@ -19,18 +18,17 @@ if __name__ == "__main__":
     pygame.init()
     screen = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
     pygame.display.set_caption("Catan")
-    dice_vals = dice.Dice(SCREENWIDTH, SCREENHEIGHT)
     running = True
 
     # Initialize the menu and game state
     # Game states: menu | options | game |
     game_state = "menu"
     menu = Menu(screen, SCREENWIDTH, SCREENHEIGHT)
+    player_list = []
 
 
-    # Initialize Buttons
-    dice_button = button.Button(screen, dice_vals.x, dice_vals.y, "none", dice_vals.total_width, dice_vals.size)
 
+    #
     # Initialize the Board
     board = game_board.Board(screen, SCREENWIDTH, SCREENHEIGHT)
     game_bank = CardBank("game")
@@ -39,30 +37,44 @@ if __name__ == "__main__":
 
 
     # Here just for visual testing
-    num = random.randint(0, 12)
+    """num = random.randint(0, 12)
     if num == 6:
         num = 1
-    other_num = random.randint(0, len(board.grid.node_list[num])-1)
+    other_num = random.randint(0, len(board.grid.node_list[num])-1)"""
 
-    x = board.grid.node_list[num][other_num]
-    x.player = 1
-    x.roads[0].player = 1
-    x.roads[1].player = 1
-
-
-    y = board.grid.node_list[6][2]
-    y.player = 1
-    y.roads[0].player = 1
-
-    board.find_buildable(1)
-
-    show_buildable = True
+    temp_player_count = 8
+    while temp_player_count != 0:
+        num = random.randint(0, len(board.grid.node_list)-1)
+        if num == 6:
+            num = 1
+        other_num = random.randint(0, len(board.grid.node_list[num])-1)
 
 
+        x = board.grid.node_list[num][other_num]
+        if x.player == 0:
+            x.player = board.cur_player
 
+            picked = False
+            picked_road = 0
+            while not picked:
+                picked_road = random.randint(0, len(x.roads)-1)
+                if x.roads[picked_road].player == 0:
+                    picked = True
+            x.roads[picked_road].player = board.cur_player
 
+            board.next_player()
+            temp_player_count -= 1
 
+    longest = 4
+    longest_player = 0
 
+    show_buildable_road = False
+    show_buildable_house = False
+    No_builds = True
+
+    next_button = button.Button(screen, SCREENWIDTH*.9, SCREENHEIGHT*.9, "none", SCREENWIDTH*.1, SCREENHEIGHT*.1)
+    build_toggle_button = button.Button(screen, SCREENWIDTH * .8, SCREENHEIGHT * .9, "none", SCREENWIDTH * .1,
+                                SCREENHEIGHT * .1)
     while running:
 
         # Makes the background for the game.
@@ -75,33 +87,56 @@ if __name__ == "__main__":
 
         if game_state == "menu":
             if menu.draw_main():
-                game_state = "game"
+                game_state = "options"
+
         elif game_state == "options":
-            menu.draw_options(board)
+            menu_return = menu.draw_options()
+            if menu_return[0] :
+                player_count = menu_return[1]
+                # If the randomize option was selected, randomize the board
+                for i in range(0, player_count):
+                    temp = Player.Player(i + 1, 'name' , board.colors[i + 1])
+                    player_list.append(temp)
+
+                if menu_return[2]:
+                    board.shuffle_board()
+                game_state = "game"
+
         elif game_state == "game":
             # draws the game board
-            board.draw_board(screen, dice_vals.result)
+            board.draw_board(screen)
             board.draw_roads(screen)
             board.draw_building(screen)
-
-            board.draw_buildable(board.grid.build_able, screen)
-
-            if show_buildable:
-                board.draw_buildable(board.grid.build_able, screen)
-                for x in board.grid.build_able:
-                    if x.button.draw():
-                        x.player = 1
-                        board.grid.buildable_road(1)
-            # Draws the dice
-            dice_vals.draw_die(screen, dice_vals.x, dice_vals.y, dice_vals.size, dice_vals.values[0])  # Draw first die
-            dice_vals.draw_die(screen, dice_vals.x + dice_vals.size + dice_vals.spacing, dice_vals.y, dice_vals.size,
-                               dice_vals.values[1])  # Draw second die
-            # Draws the card banks
+            choice = menu.draw_game()
             game_bank.draw_bank(screen, SCREENWIDTH, (255, 255, 255))
-            player_bank.draw_bank(screen, SCREENWIDTH, (255, 0, 0))
-            # Checks for dice roll
-            if dice_button.draw():
-                dice_vals.roll_dice()
+            player_list[0].bank.draw_bank(screen, SCREENWIDTH, player_list[0].color)
+            # If the build buttons was clicked
+            if choice[1]:
+                game_state = "build"
+            # If the next player button is clicked
+            elif choice[0]:
+                # TO DO: Insert the way to do next person
+                player_list.append(player_list.pop(0))
+                for player in player_list:
+                    print(player.player_id)
+                print('\n')
+            elif choice[2]:
+                game_state = "trade"
+
+        elif game_state == 'build':
+            board.draw_board(screen)
+            if menu.draw_build(player_bank) == 'exit':
+                game_state = 'game'
+
+        elif game_state == 'trade':
+            if menu.draw_trade(player_bank)[0]:
+                game_state = 'game'
+
+        elif game_state == 'road':
+            pass
+
+        elif game_state == 'structure':
+            pass
 
         pygame.display.update()
 
