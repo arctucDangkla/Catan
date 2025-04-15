@@ -124,11 +124,11 @@ class Menu:
             # if check amount = true
             # return 'settlement'
             # else draw_popup
-            pass
+            return 1
         if self.city.draw():
             pass
         if self.road.draw():
-            pass
+            return 2
         if self.devcard.draw():
             pass
         #return [self.exit.draw(), self.settlement.draw(), self.city.draw(), self.road.draw(), self.devcard.draw()]

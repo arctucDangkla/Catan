@@ -67,7 +67,7 @@ class Board:
         }
 
         # The numbers for each corresponding hexagon
-        self.numbers = [10, 2, 9, 12, 6, 4, 10, 9, 11, 0, 3, 8, 8, 3, 4, 5, 5, 6, 11]
+        self.numbers = [10, 2, 9, 12, 6, 4, 10, 9, 11, 3, 8, 8, 3, 4, 5, 5, 6, 11]
 
         # Robber position
         self.robber_pos = None
@@ -113,7 +113,7 @@ class Board:
 
 
                 # Make and draw the hexagon
-                if self.tile_list[hex_count] == 'D':
+                if self.tile_list[tile_count] == "D":
                     self.point_lst.append([self.__calculate_hexagon(x, y, self.hex_size), True, 0, self.tile_list[tile_count]])
                 else:
                     self.point_lst.append([self.__calculate_hexagon(x, y, self.hex_size), False, self.numbers[num_count], self.tile_list[tile_count]])
@@ -173,12 +173,7 @@ class Board:
             pygame.draw.circle(screen, (255, 255, 255), self.robber_pos, int(self.hex_size * 0.4))
         pygame.draw.circle(screen, robber_color, self.robber_pos, int(self.hex_size * 0.3))
 
-        pygame.draw.polygon(screen, self.colors[self.cur_player],
-                            [[self.width, self.height], [self.width * .9, self.height],
-                             [self.width * .9, self.height * .9], [self.width, self.height * .9]])
-        pygame.draw.polygon(screen, (100,100,100),
-                            [[self.width*.8, self.height], [self.width * .9, self.height],
-                             [self.width * .9, self.height * .9], [self.width * .8, self.height * .9]])
+
         # Draw the dice
         self.dice_vals.draw_die(screen, self.dice_vals.x, self.dice_vals.y, self.dice_vals.size,
                                 self.dice_vals.values[0])  # Draw first die
