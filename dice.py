@@ -1,14 +1,16 @@
 import pygame
 import random
 
+
 class Dice:
-    def __init__(self, x, y):
+    def __init__(self, x, y, board):
 
         self.values = [random.randint(1, 6), random.randint(1, 6)]  # Roll two dice
         self.result = sum(self.values)  # Sum the dice
         self.size = 60  # Size of each die
         self.spacing = 20  # Space between the two dice
         self.total_width = 2 * self.size + self.spacing  # Total width of both dice
+        self.board = board
 
         # Type checks inputs and sets
         if (isinstance(x, int) or isinstance(x, float)) and (
@@ -21,8 +23,11 @@ class Dice:
 
     # "Rolls" and randomizes the dice
     def roll_dice(self):
-        self.values = [random.randint(1, 6), random.randint(1, 6)]  # Roll two dice
-        self.result = sum(self.values)  # Sum the dice
+        if not self.board.dice_rolled:
+            self.values = [random.randint(1, 6), random.randint(1, 6)]  # Roll two dice
+            self.result = sum(self.values)  # Sum the dice
+            self.board.awards_players(self.result)
+            self.board.dice_rolled = True
 
     # Draws the dice onto surface
     def draw_die(self, surface, x, y, size, value):

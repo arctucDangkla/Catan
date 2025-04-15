@@ -32,31 +32,6 @@ if __name__ == "__main__":
     game_bank = CardBank("game")
     player_bank = CardBank("player")
 
-    # Here just for visual testing
-
-    """temp_player_count = 8
-    while temp_player_count != 0:
-        num = random.randint(0, len(board.grid.node_list)-1)
-        if num == 6:
-            num = 1
-        other_num = random.randint(0, len(board.grid.node_list[num])-1)
-
-
-        x = board.grid.node_list[num][other_num]
-        if x.player == 0:
-            x.player = board.cur_player
-
-            picked = False
-            picked_road = 0
-            while not picked:
-                picked_road = random.randint(0, len(x.roads)-1)
-                if x.roads[picked_road].player == 0:
-                    picked = True
-            x.roads[picked_road].player = board.cur_player
-
-            board.next_player()
-            temp_player_count -= 1"""
-
     longest = 4
     longest_player = 0
 
@@ -95,8 +70,8 @@ if __name__ == "__main__":
                 for i in range(0, player_count):
                     temp = Player.Player(i + 1, 'name', board.colors[i + 1])
                     player_list.append(temp)
+                    board.player_list.append(temp)
                 set_up_order = [player.id for player in player_list] + [player.id for player in player_list[::-1]]
-                print(set_up_order)
 
                 if menu_return[2]:
                     board.shuffle_board()
@@ -116,10 +91,6 @@ if __name__ == "__main__":
                 if len(set_up_order) == 0:
                     set_up_complete = True
                 else:
-
-
-
-
                     pygame.draw.polygon(screen, board.colors[set_up_order[0]], [(0 + board.height / 20,
                                                                                  0 + board.height / 20), (
                                                                                 0 + board.height / 20,
@@ -130,7 +101,7 @@ if __name__ == "__main__":
                                                                                  0 + board.height / 20)])
 
                     if set_up_stage == 1:
-                        board.find_buildable_house(0)
+                        board.grid.buildable_house(0)
                         board.draw_buildable(board.grid.build_able, screen)
                         for x in board.grid.build_able:
                             if x.button.draw():
@@ -138,8 +109,13 @@ if __name__ == "__main__":
                                 x.player = set_up_order[0]
                                 set_up_stage += 1
                                 for road in x.roads:
-                                    if road.player == 0:
-                                        board.grid.build_able.append(road)
+                                    board.grid.build_able.append(road)
+                                if len(set_up_order) <= 4:
+                                    for item in x.resources:
+                                        for card in x.resources[item]:
+                                            if card != 'D':
+                                                board.player_list[set_up_order[0]-1].add_resource(card)
+                                                board.card_bank.remove_card(card)
                                 break
 
                     elif set_up_stage == 2:
@@ -152,30 +128,32 @@ if __name__ == "__main__":
                                 break
 
             elif set_up_complete:
-                choice = menu.draw_game()
-                game_bank.draw_bank(screen, SCREENWIDTH, (255, 255, 255))
-                player_list[0].bank.draw_bank(screen, SCREENWIDTH, player_list[0].color)
-                # If the build buttons was clicked
-                if choice[1]:
-                    game_state = "build"
-                # If the next player button is clicked
-                elif choice[0]:
-                    # TO DO: Insert the way to do next person
-                    player_list.append(player_list.pop(0))
-                    board.cur_player = player_list[0].player_id
+                board.card_bank.draw_bank(screen, SCREENWIDTH, (255, 255, 255))
+                player_list[board.cur_player - 1].bank.draw_bank(screen, SCREENWIDTH, board.colors[board.cur_player])
+                if board.dice_rolled:
+                    choice = menu.draw_game()
+                    # If the build buttons was clicked
+                    if choice[1]:
+                        game_state = "build"
+                    # If the next player button is clicked
+                    elif choice[0]:
+                        player_list.append(player_list.pop(0))
+                        board.cur_player = player_list[0].player_id
+                        board.dice_rolled = False
 
-                elif choice[2]:
-                    game_state = "trade"
+                    elif choice[2]:
+                        game_state = "trade"
 
 
 
 
         # Allows player to spend resources to build Roads and Structures
         elif game_state == 'build':
-            choice = menu.draw_build(player_bank)
+            choice = menu.draw_build()
             board.draw_board(screen)
             board.draw_roads(screen)
             board.draw_building(screen)
+            player_list[board.cur_player - 1].bank.draw_bank(screen, SCREENWIDTH, board.colors[board.cur_player])
 
             # Sets game state to game
             if choice == 'exit':
@@ -201,6 +179,7 @@ if __name__ == "__main__":
             board.draw_board(screen)
             board.draw_roads(screen)
             board.draw_building(screen)
+            player_list[board.cur_player - 1].bank.draw_bank(screen, SCREENWIDTH, board.colors[board.cur_player])
 
             board.find_buildable_road(board.cur_player)
             board.draw_buildable(board.grid.build_able, screen)
@@ -211,11 +190,16 @@ if __name__ == "__main__":
                 if x.button.draw():
                     x.player = board.cur_player
                     board.grid.buildable_road(board.cur_player)
+                    board.player_list[board.cur_player - 1].remove_resource("Wo")
+                    board.player_list[board.cur_player - 1].remove_resource("B")
+                    board.card_bank.add_card("B")
+                    board.card_bank.add_card("Wo")
 
                     for road in board.grid.edge_list:
 
                         if road.player == board.cur_player:
                             val = longest_path.temp_name(road, board.cur_player, [], [])
+
 
                             if val > longest:
                                 longest = val
@@ -232,6 +216,7 @@ if __name__ == "__main__":
             board.draw_board(screen)
             board.draw_roads(screen)
             board.draw_building(screen)
+            player_list[board.cur_player - 1].bank.draw_bank(screen, SCREENWIDTH, board.colors[board.cur_player])
 
             board.find_buildable_house(board.cur_player)
 
@@ -239,6 +224,14 @@ if __name__ == "__main__":
             for x in board.grid.build_able:
                 if x.button.draw():
                     x.player = board.cur_player
+                    board.player_list[board.cur_player - 1].remove_resource("Wo")
+                    board.player_list[board.cur_player - 1].remove_resource("B")
+                    board.player_list[board.cur_player - 1].remove_resource("S")
+                    board.player_list[board.cur_player - 1].remove_resource("Wh")
+                    board.card_bank.add_card("B")
+                    board.card_bank.add_card("Wo")
+                    board.card_bank.add_card("S")
+                    board.card_bank.add_card("Wh")
 
             if menu.exit.draw():
                 game_state = 'build'

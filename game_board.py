@@ -4,6 +4,7 @@ import random
 import Nodes_and_structures_map as Grid
 from dice import Dice
 import button
+import card_bank
 
 
 class Board:
@@ -76,7 +77,7 @@ class Board:
         self.font = pygame.font.Font(None, 36)  # Default font, size 36 for text
 
         # Dice info
-        self.dice_vals = Dice(self.width, self.height)
+        self.dice_vals = Dice(self.width, self.height, board=self)
         self.dice_button = button.Button(screen, self.dice_vals.x, self.dice_vals.y, "none", self.dice_vals.total_width, self.dice_vals.size)
 
         # Size info for the hexagon
@@ -86,6 +87,7 @@ class Board:
         self.hex_diff = self.hex_size * 1.875  # Difference between hexagons horizontally
         self.row_height = self.hex_diff - 21  # Difference between hexagons vertically
         self.point_lst = []
+        self.player_list = []
 
         # A list of tuples where (hex_count, row offset)
         self.rows = [
@@ -100,6 +102,8 @@ class Board:
         self.create_buildings(self.width / 50 + (1/3))
         self.calculate_roads(self.screen, self.width / 125)   # self.width / 5 / (5+(1/3)))
 
+        self.card_bank = card_bank.CardBank("game")
+        self.dice_rolled = False
 
     def generate_hexagons(self):
         num_count = 0
@@ -122,6 +126,7 @@ class Board:
 
                 self.background.append(list(self.__calculate_hexagon(x, y, self.hex_size*1.1)))
                 self.hex_boarder.append(list(self.__calculate_hexagon(x, y, self.hex_size * 1.025)))
+        self.grid.assign_tiles_to_nodes(self.point_lst)
 
     # Method that will draw the game board
     def draw_board(self, screen):
@@ -183,7 +188,6 @@ class Board:
         # Checks for dice roll
         if self.dice_button.draw():
             self.dice_vals.roll_dice()
-
 
     # Shuffles the entire board and numbers
     def shuffle_board(self):
@@ -290,12 +294,39 @@ class Board:
 
     # Shows all spots where a player can build
     def find_buildable_road(self, player):
-        self.grid.buildable_road(player)
+        if self.player_list[player-1].get_resource_count('Wo') > 0 and self.player_list[player-1].get_resource_count('B') > 0:
+            self.grid.buildable_road(player)
+        else:
+            self.grid.build_able = []
 
     def find_buildable_house(self, player):
         self.grid.buildable_house(player)
+        if self.player_list[player-1].get_resource_count('Wo') > 0 and self.player_list[player-1].get_resource_count('B') > 0 and self.player_list[player-1].get_resource_count('Wh') > 0 and self.player_list[player-1].get_resource_count('S') > 0:
+            self.grid.buildable_road(player)
+        else:
+            self.grid.build_able = []
 
     # Print Buildable
     def draw_buildable(self, build, screen):
         for item in build:
             pygame.draw.circle(screen, (135, 206, 235), item.location, int(self.hex_size * 0.15))
+
+    def awards_players(self, roll):
+        for row in self.grid.node_list:
+            for node in row:
+                if node.player != 0 and roll in node.resources:
+                    for tile in node.resources[roll]:
+                        if node.city:
+                            if self.card_bank.bank[tile] >= 2:
+                                self.player_list[node.player - 1].add_resource(tile, 2)
+                                self.card_bank.remove_card(tile, 2)
+                            elif self.card_bank.bank[tile] == 1:
+                                self.player_list[node.player - 1].add_resource(tile)
+                                self.card_bank.remove_card(tile)
+                        else:
+                            if self.card_bank.bank[tile] >= 1:
+                                self.player_list[node.player - 1].add_resource(tile)
+                                self.card_bank.remove_card(tile)
+
+
+

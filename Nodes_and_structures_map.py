@@ -41,6 +41,7 @@ class Node:
         self.location = []
         self.button = None
         self.points = []
+        self.resources = {}
 
     def __str__(self):
         return f"{self.name}"
@@ -186,7 +187,6 @@ class Graph:
                     a = Edge(self.node_list[row - 1][node], self.node_list[row - 2][node])
                     self.edge_list.append(a)
 
-
     def build_road(self, node_a: Node, node_b: Node, player: Player):
         for edge in node_a.roads:
             if node_b in edge.nodes:
@@ -251,15 +251,35 @@ class Graph:
                 return False
         return True
 
+    def assign_tiles_to_nodes(self, tiles):
+        for num in range(len(tiles)):
+            tile = tiles[num]
+            if num < 3:
+                mod = 0
+                row = 0
+            elif num < 7:
+                mod = -3
+                row = 2
+            elif num < 12:
+                mod = -7
+                row = 4
+            elif num < 16:
+                mod = -12
+                row = 6
+            else:
+                mod = -16
+                row = 8
+            if num <= 6:
+                list_thing = [self.node_list[row][num+mod], self.node_list[row+1][num+mod+1], self.node_list[row+1][num+mod], self.node_list[row+2][num+mod+1], self.node_list[row+2][num+mod], self.node_list[row+3][num+mod+1]]
 
-if __name__ == "__main__":
-    G = Graph()
-    P = Player("Owen")
-    Gr = Player("Grace")
-    G.build_road(G.node_list[0][0], G.node_list[1][0], P)
-    try:
-        G.build_road(G.node_list[0][0], G.node_list[1][0], Gr)
-    except:
-        pass
-    for x in G.edge_list:
-        print(x)
+            elif num >= 12:
+                list_thing = [self.node_list[row][num+mod+1], self.node_list[row+1][num+mod+1], self.node_list[row+1][num+mod], self.node_list[row+2][num+mod+1], self.node_list[row+2][num+mod], self.node_list[row+3][num+mod]]
+
+            else:
+                list_thing = [self.node_list[row][num+mod], self.node_list[row+1][num+mod+1], self.node_list[row+1][num+mod], self.node_list[row+2][num+mod+1], self.node_list[row+2][num+mod], self.node_list[row+3][num+mod]]
+
+            for thing in list_thing:
+                if tile[2] not in thing.resources:
+                    thing.resources[tile[2]] = [tile[3]]
+                else:
+                    thing.resources[tile[2]].append(tile[3])
