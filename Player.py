@@ -3,14 +3,7 @@ from card_bank import CardBank
 
 class Player:
     def __init__(self, player_id: int, name: str, color: str):
-        """
-        Initialize a player with basic attributes
 
-        Args:
-            player_id: Unique integer identifier (1-4)
-            name: Player's name
-            color: String representing player color ('red', 'blue', etc.)
-        """
         self.player_id = player_id
         self.name = name
         self.color = color

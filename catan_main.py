@@ -129,7 +129,7 @@ if __name__ == "__main__":
 
             elif set_up_complete:
                 board.card_bank.draw_bank(screen, SCREENWIDTH, (255, 255, 255))
-                player_list[board.cur_player - 1].bank.draw_bank(screen, SCREENWIDTH, board.colors[board.cur_player])
+                player_list[0].bank.draw_bank(screen, SCREENWIDTH, board.colors[board.cur_player])
                 if board.dice_rolled:
                     choice = menu.draw_game()
                     # If the build buttons was clicked
@@ -153,8 +153,8 @@ if __name__ == "__main__":
             board.draw_board(screen)
             board.draw_roads(screen)
             board.draw_building(screen)
-            player_list[board.cur_player - 1].bank.draw_bank(screen, SCREENWIDTH, board.colors[board.cur_player])
-
+            player_list[0].bank.draw_bank(screen, SCREENWIDTH, board.colors[board.cur_player])
+            print(f"cur player = {board.cur_player}{player_list}")
             # Sets game state to game
             if choice == 'exit':
                 game_state = 'game'
