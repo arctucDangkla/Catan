@@ -108,6 +108,7 @@ class Board:
     def generate_hexagons(self):
         num_count = 0
         tile_count = 0
+        self.point_lst = []
         for hex_count, row_offset in self.rows:
 
             for i in range(hex_count):
@@ -191,7 +192,13 @@ class Board:
 
     # Shuffles the entire board and numbers
     def shuffle_board(self):
+        self.tile_list = ["O", "S", "Wo", "Wh", "B", "S", "B", "Wh", "Wo", "D",
+                          "Wo", "O", "Wo", "O", "Wh", "S", "B", "Wh", "S"
+                          ]
+        self.numbers = [10, 2, 9, 12, 6, 4, 10, 9, 11, 3, 8, 8, 3, 4, 5, 5, 6, 11]
+
         random.shuffle(self.tile_list)
+
         random.shuffle(self.numbers)
         self.generate_hexagons()
 
@@ -302,7 +309,7 @@ class Board:
     def find_buildable_house(self, player):
         self.grid.buildable_house(player)
         if self.player_list[player-1].get_resource_count('Wo') > 0 and self.player_list[player-1].get_resource_count('B') > 0 and self.player_list[player-1].get_resource_count('Wh') > 0 and self.player_list[player-1].get_resource_count('S') > 0:
-            self.grid.buildable_road(player)
+            self.grid.buildable_house(player)
         else:
             self.grid.build_able = []
 
