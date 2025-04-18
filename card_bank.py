@@ -86,11 +86,11 @@ class CardBank:
         elif self.user == 'game':
             if card in ('Wo', 'O', 'S', 'B', 'Wh') and self.bank[card] == 20 or self.bank[card] + num > 20:
                 raise ValueError('Cannot add more cards.')
-            elif card == 'K' and self.bank[card] == 14 or self.bank[card] + num > 14:
+            elif card == 'K' and (self.bank[card] == 14 or self.bank[card] + num > 14):
                 raise ValueError('Cannot add more cards.')
-            elif card == 'P' and self.bank[card] == 6 or self.bank[card] + num > 6:
+            elif card == 'P' and (self.bank[card] == 6 or self.bank[card] + num > 6):
                 raise ValueError('Cannot add more cards.')
-            elif card == 'V' and self.bank[card] == 5 or self.bank[card] + num > 5:
+            elif card == 'V' and (self.bank[card] == 5 or self.bank[card] + num > 5):
                 raise ValueError('Cannot add more cards.')
             else:
                 self.bank[card] += num

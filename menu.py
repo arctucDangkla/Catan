@@ -2,6 +2,7 @@ import pygame
 from button import Button
 import card_bank
 
+
 class Menu:
     def __init__(self, screen, width, height):
         # Defaults for the menu
@@ -114,21 +115,21 @@ class Menu:
         return [self.next_player.draw(), self.build.draw(), self.trade.draw()]
 
     # Draws a menu to choose what to build. If not enough resources, show a popup.
-    def draw_build(self, bank):
+    def draw_build(self):
         # player.bank.drawBank(..)
         self.exit.rect.topleft = (50, 700)
-        bank.draw_bank(self.screen, self.width, (255, 0, 0))
+
         if self.exit.draw():
             return 'exit'
         if self.settlement.draw():
             # if check amount = true
             # return 'settlement'
             # else draw_popup
-            pass
+            return 1
         if self.city.draw():
             pass
         if self.road.draw():
-            pass
+            return 2
         if self.devcard.draw():
             pass
         #return [self.exit.draw(), self.settlement.draw(), self.city.draw(), self.road.draw(), self.devcard.draw()]

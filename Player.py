@@ -3,14 +3,7 @@ from card_bank import CardBank
 
 class Player:
     def __init__(self, player_id: int, name: str, color: str):
-        """
-        Initialize a player with basic attributes
 
-        Args:
-            player_id: Unique integer identifier (1-4)
-            name: Player's name
-            color: String representing player color ('red', 'blue', etc.)
-        """
         self.player_id = player_id
         self.name = name
         self.color = color
@@ -35,7 +28,7 @@ class Player:
         self.settlements = []
         self.cities = []
         self.roads = []
-
+        self.id = player_id # 1-4
         # Victory points
         self._victory_points = 0
         self._recalculate_victory_points()
@@ -185,7 +178,7 @@ class Player:
         cards = [f"{self._get_card_name(k)}: {v}"
                  for k, v in self.development_cards.items() if v > 0]
 
-        return (f"Player {self.player_id} ({self.name}) - {self._victory_points} VP\n"
+        return (f"Player {self.id} ({self.name}) - {self._victory_points} VP\n"
                 f"Resources: {', '.join(resources)}\n"
                 f"Dev Cards: {', '.join(cards) if cards else 'None'}\n"
                 f"Buildings: {len(self.settlements)} settlements, {len(self.cities)} cities\n"
