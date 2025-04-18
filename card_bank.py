@@ -92,8 +92,6 @@ class CardBank:
                 raise ValueError('Cannot add more cards.')
             elif card == 'V' and (self.bank[card] == 5 or self.bank[card] + num > 5):
                 raise ValueError('Cannot add more cards.')
-            else:
-                self.bank[card] += num
         else:
             self.bank[card] += num
 

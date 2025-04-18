@@ -111,14 +111,14 @@ class Player:
         self.cities.append(location)
         self._recalculate_victory_points()
 
-    def build_road(self, location, initial_setup=False):
-        """
+    """def build_road(self, location, initial_setup=False):
+        
         Build a road at specified location
 
         Args:
             location: Road location identifier
             initial_setup: If True, skips resource payment
-        """
+        
         if not initial_setup:
             # Road cost
             self.bank.remove_card('Wo', 1)  # Wood
@@ -129,10 +129,10 @@ class Player:
         # Check for longest road
         if len(self.roads) >= 5 and not self.has_longest_road:
             self.has_longest_road = True
-            self._recalculate_victory_points()
+            self._recalculate_victory_points()"""
 
-    def play_knight_card(self):
-        """Play a knight development card"""
+    """def play_knight_card(self):
+        Play a knight development card
         if self.development_cards['K'] < 1:
             raise ValueError("No knight cards available")
 
@@ -142,16 +142,16 @@ class Player:
         # Check for largest army
         if self.development_cards['K'] >= 3 and not self.has_largest_army:
             self.has_largest_army = True
-            self._recalculate_victory_points()
-
+            self._recalculate_victory_points()"""
+    """
     def trade_with_bank(self, offer: dict, request: dict):
-        """
+        
         Trade resources with the bank
 
         Args:
             offer: Dict of resources to give (e.g., {'Wo': 4})
             request: Dict of resources to receive (e.g., {'O': 1})
-        """
+        
         # Remove offered resources
         for resource, amount in offer.items():
             self.bank.remove_card(resource, amount)
@@ -159,39 +159,11 @@ class Player:
         # Add requested resources
         for resource, amount in request.items():
             self.bank.add_card(resource, amount)
+        """
 
     @property
     def victory_points(self):
         """Current victory points (read-only)"""
         return self._victory_points
 
-    def __str__(self):
-        """String representation of player state"""
-        resources = [
-            f"Wood: {self.bank.bank['Wo']}",
-            f"Brick: {self.bank.bank['B']}",
-            f"Sheep: {self.bank.bank['S']}",
-            f"Wheat: {self.bank.bank['Wh']}",
-            f"Ore: {self.bank.bank['O']}"
-        ]
 
-        cards = [f"{self._get_card_name(k)}: {v}"
-                 for k, v in self.development_cards.items() if v > 0]
-
-        return (f"Player {self.id} ({self.name}) - {self._victory_points} VP\n"
-                f"Resources: {', '.join(resources)}\n"
-                f"Dev Cards: {', '.join(cards) if cards else 'None'}\n"
-                f"Buildings: {len(self.settlements)} settlements, {len(self.cities)} cities\n"
-                f"Roads: {len(self.roads)} (Longest Road: {'Yes' if self.has_longest_road else 'No'})\n"
-                f"Knights: {self.development_cards['K']} (Largest Army: {'Yes' if self.has_largest_army else 'No'})")
-
-    def _get_card_name(self, card_code: str) -> str:
-        """Convert card code to full name"""
-        card_names = {
-            'K': 'Knight',
-            'V': 'Victory Point',
-            'R': 'Road Building',
-            'Y': 'Year of Plenty',
-            'M': 'Monopoly'
-        }
-        return card_names.get(card_code, card_code)

@@ -32,6 +32,24 @@ class TestResourceManagement(unittest.TestCase):
         with self.assertRaises(Exception):
             self.player.remove_resource('O', 1)  # No ore
 
+    def test_development_card_invalid_card(self):
+        with self.assertRaises(Exception):
+            self.player.play_development_card('Wo')
+        with self.assertRaises(Exception):
+            self.player.add_development_card('Wo')
+    def test_development_card_not_enough(self):
+        with self.assertRaises(Exception):
+            self.player.play_development_card('K')
+    def test_development_card_played(self):
+        self.player.add_development_card('K')
+        self.assertEqual(self.player.development_cards['K'], 1)
+        self.player.play_development_card('K')
+        self.assertEqual(self.player.development_cards['K'], 0)
+        self.player.has_longest_road = True
+        self.player.has_largest_army = True
+        self.player._recalculate_victory_points()
+        self.assertEqual(self.player.victory_points, 4)
+
 
 class TestBuilding(unittest.TestCase):
     def setUp(self):
@@ -77,6 +95,3 @@ class TestDevelopmentCards(unittest.TestCase):
         self.assertEqual(self.player.development_cards['V'], 1)
         self.assertEqual(self.player.victory_points, 1)
 
-
-if __name__ == '__main__':
-    unittest.main()

@@ -274,6 +274,6 @@ class CardBankTest(unittest.TestCase):
     def test_add_max(self):
         bank = CardBank('game')
         resources = ['Wo', 'O', 'S', 'B', 'Wh', 'K', 'P', 'V']
-        rand_resource = random.choice(resources)
-        with self.assertRaises(ValueError):
-            bank.add_card(rand_resource)
+        for resource in resources:
+            with self.assertRaises(ValueError):
+                bank.add_card(resource)
