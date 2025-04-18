@@ -252,6 +252,9 @@ class Graph:
         return True
 
     def assign_tiles_to_nodes(self, tiles):
+        for row in self.node_list:
+            for col in row:
+                col.resources = {}
         for num in range(len(tiles)):
             tile = tiles[num]
             if num < 3:
