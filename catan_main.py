@@ -18,6 +18,7 @@ if __name__ == "__main__":
     pygame.init()
     screen = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
     pygame.display.set_caption("Catan")
+    result = []
     running = True
 
     # Initialize the menu and game state
@@ -154,7 +155,6 @@ if __name__ == "__main__":
             board.draw_roads(screen)
             board.draw_building(screen)
             player_list[0].bank.draw_bank(screen, SCREENWIDTH, board.colors[board.cur_player])
-            print(f"cur player = {board.cur_player}{player_list}")
             # Sets game state to game
             if choice == 'exit':
                 game_state = 'game'
@@ -169,17 +169,72 @@ if __name__ == "__main__":
 
         # Allows players to trade
         elif game_state == 'trade':
-
-            # Sets game state to game
-            if menu.draw_trade(player_bank)[0]:
+            # Sets game state to game if exit is clicked
+            result = menu.draw_trade(player_list[0])
+            player_list[0].bank.draw_bank(screen, SCREENWIDTH, player_list[0].color)
+            if result[0] == 'exit':
                 game_state = 'game'
+            elif result[0] == 'continue':
+                game_state = 'playtrade'
+            elif result[0] == 'bank':
+                game_state = 'bank'
+            else:
+                pass
 
+        # Manages the player selection of the trade
+        elif game_state == 'playtrade':
+            player_pick = menu.draw_player_pick(len(player_list), 'trade')
+            if player_pick[0]:
+                try:
+                    for player in player_list:
+                        if player_pick[player.id]:
+                            for resource in result[2]:
+                                if result[2][resource] != 0:
+                                    player.bank.remove_card(resource, result[2][resource])
+                                    player_list[0].bank.add_card(resource, result[2][resource])
+                                if result[1][resource] != 0:
+                                    player_list[0].bank.remove_card(resource, result[1][resource])
+                                    player.bank.add_card(resource, result[1][resource])
+                except ValueError:
+                    print('Error while trying to add or remove resources.')
+                    menu.draw_player_pick(len(player_list), 'trade')
+                    menu.draw_popup()
+                else:
+                    game_state = 'game'
+
+        # Manages the multi level trade (for resource spread)
+        elif game_state == 'bank':
+            # The following segment is meant to be used to be able to add resources
+            # to more than one player at a time, for dice rolls
+            player_pick = menu.draw_player_pick(len(player_list), 'bank')
+            board.draw_board(screen)
+            board.draw_roads(screen)
+            board.draw_building(screen)
+            if player_pick[0]:
+                try:
+                    for player in player_list:
+                        if player_pick[player.id]:
+                            for resource in result[2]:
+                                if result[2][resource] != 0:
+                                    game_bank.remove_card(resource, result[2][resource])
+                                    player.bank.add_card(resource, result[2][resource])
+                                if result[1][resource] != 0:
+                                    game_bank.add_card(resource, result[1][resource])
+                                    player.bank.remove_card(resource, result[1][resource])
+                except ValueError:
+                    menu.draw_popup()
+                    menu.draw_player_pick(len(player_list), 'bank')
+                    print('Error while trying to add or remove resources.')
+                else:
+                    play_check = False
+                    game_state = 'game'
+            pygame.display.update()
         # allows player to place roads
         elif game_state == 'road':
             board.draw_board(screen)
             board.draw_roads(screen)
             board.draw_building(screen)
-            player_list[board.cur_player - 1].bank.draw_bank(screen, SCREENWIDTH, board.colors[board.cur_player])
+            player_list[0].bank.draw_bank(screen, SCREENWIDTH, board.colors[board.cur_player])
 
             board.find_buildable_road(board.cur_player)
             board.draw_buildable(board.grid.build_able, screen)
@@ -216,7 +271,7 @@ if __name__ == "__main__":
             board.draw_board(screen)
             board.draw_roads(screen)
             board.draw_building(screen)
-            player_list[board.cur_player - 1].bank.draw_bank(screen, SCREENWIDTH, board.colors[board.cur_player])
+            player_list[0].bank.draw_bank(screen, SCREENWIDTH, board.colors[board.cur_player])
 
             board.find_buildable_house(board.cur_player)
 
